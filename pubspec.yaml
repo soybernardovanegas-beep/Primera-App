@@ -42,6 +42,10 @@ dependencies:
   epub_view: ^3.2.0
   path: ^1.9.1
   epubx: ^4.0.0
+  flutter_tts: ^4.2.5
+  http: ^1.6.0
+  image: ^3.3.0
+  html: ^0.15.6
 
 dev_dependencies:
   flutter_test:

@@ -6,9 +6,14 @@ class Book {
     required this.author,
     required this.addedAt,
     required this.localPath,
+    required this.coverPath,
   });
 
-  factory Book.fromRow(Map<String, dynamic> row, String localPath) {
+  factory Book.fromRow(
+    Map<String, dynamic> row,
+    String localPath,
+    String coverPath,
+  ) {
     return Book(
       id: row['id'] as String,
       hash: row['hash'] as String,
@@ -16,6 +21,7 @@ class Book {
       author: row['author'] as String?,
       addedAt: DateTime.parse(row['added_at'] as String),
       localPath: localPath,
+      coverPath: coverPath,
     );
   }
 
@@ -29,5 +35,10 @@ class Book {
   /// the synced library but hasn't been imported on this device yet.
   final String localPath;
 
+  /// Path to a cached cover thumbnail on this device. Empty when no cover
+  /// could be extracted or the book hasn't been imported here yet.
+  final String coverPath;
+
   bool get availableLocally => localPath.isNotEmpty;
+  bool get hasCover => coverPath.isNotEmpty;
 }
