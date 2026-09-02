@@ -11,7 +11,7 @@
 
 import {bundle} from '@remotion/bundler';
 import {renderMedia, selectComposition} from '@remotion/renderer';
-import {copyFileSync, existsSync, mkdirSync, readFileSync, statSync} from 'node:fs';
+import {copyFileSync, existsSync, linkSync, mkdirSync, readFileSync, statSync, symlinkSync} from 'node:fs';
 import {basename, dirname, isAbsolute, join, relative, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {resolverNavegador} from './navegador.mjs';
@@ -128,12 +128,32 @@ const prepararEntrada = (entrada) => {
   mkdirSync(DIR_ENTRADAS, {recursive: true});
   const destino = join(DIR_ENTRADAS, basename(absoluta));
 
-  const yaCopiado =
-    existsSync(destino) && statSync(destino).size === statSync(absoluta).size;
+  const yaEsta = existsSync(destino) && statSync(destino).size === statSync(absoluta).size;
 
-  if (!yaCopiado) {
-    console.log(`Copiando ${absoluta} -> public/entradas/${basename(absoluta)}`);
-    copyFileSync(absoluta, destino);
+  if (!yaEsta) {
+    // El material en bruto puede pesar decenas de GB (4K con audio PCM son
+    // ~12 GB por cada 27 minutos), así que copiar es el último recurso.
+    // Un enlace ocupa cero y Remotion lo sirve igual desde public/.
+    const gb = statSync(absoluta).size / 1e9;
+
+    try {
+      // Enlace duro: instantáneo, pero solo dentro del mismo volumen.
+      linkSync(absoluta, destino);
+      console.log(`Enlazado (duro) ${basename(absoluta)} en public/entradas/`);
+    } catch {
+      try {
+        // Enlace simbólico: cruza volúmenes, pero en Windows exige el modo
+        // de desarrollador o permisos de administrador.
+        symlinkSync(absoluta, destino);
+        console.log(`Enlazado (simbólico) ${basename(absoluta)} en public/entradas/`);
+      } catch {
+        console.log(
+          `No se pudo enlazar, copiando ${gb.toFixed(1)} GB a public/entradas/ ` +
+            '(mueve el proyecto al mismo disco que el video para evitarlo)...',
+        );
+        copyFileSync(absoluta, destino);
+      }
+    }
   }
 
   return `entradas/${basename(absoluta)}`;

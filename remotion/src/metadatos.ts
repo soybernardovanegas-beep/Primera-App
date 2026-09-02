@@ -21,6 +21,25 @@ export const resolverFuente = (fuente: string): string => {
   return staticFile(fuente.replace(/^\/+/, ''));
 };
 
+/**
+ * Cadencias estándar, con su valor exacto. Las de origen NTSC (29.97, 23.976,
+ * 59.94) no son números redondos: son x1000/1001. Redondearlas a 30 o 24
+ * parece inofensivo, pero acumula deriva — en un video de 27 minutos, usar 30
+ * en lugar de 29.97 desplaza el final 1,6 s y desincroniza los subtítulos.
+ */
+const CADENCIAS = [24000 / 1001, 24, 25, 30000 / 1001, 30, 48, 50, 60000 / 1001, 60, 120];
+
+/** Ajusta los fps medidos a la cadencia estándar más cercana, sin redondear. */
+export const ajustarCadencia = (medidos: number): number => {
+  // Hay que quedarse con la MÁS cercana, no con la primera dentro del margen:
+  // 29.97 y 30 conviven en la lista y un material de 30 exactos no debe caer a 29.97.
+  const cercana = CADENCIAS.reduce((mejor, c) =>
+    Math.abs(c - medidos) < Math.abs(mejor - medidos) ? c : mejor,
+  );
+
+  return Math.abs(cercana - medidos) < 0.2 ? cercana : medidos;
+};
+
 /** H.264 solo admite dimensiones pares. */
 export const aPar = (n: number): number => {
   const entero = Math.round(n);
@@ -52,7 +71,7 @@ export const leerMetadatos = async (src: string): Promise<MetadatosVideo> => {
       duracionEnSegundos: duracion,
       ancho: pista.displayWidth,
       alto: pista.displayHeight,
-      fps: Math.round(estadisticas.averagePacketRate) || 30,
+      fps: ajustarCadencia(estadisticas.averagePacketRate) || 30,
     };
   } catch (error) {
     // Sin estos datos no se puede saber cuánto dura la composición, así que no
