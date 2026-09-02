@@ -74,6 +74,12 @@ Formato
                        cabezal provocan más búsquedas y van más lento.
   --timeout <ms>       Espera máxima por fotograma (28000 por defecto). Súbelo
                        si el origen es pesado o está en un disco lento.
+  --aceleracion        Usa el codificador por hardware (QuickSync, NVENC, AMF)
+                       si lo hay. Remotion lo trae DESACTIVADO por defecto.
+                       Incompatible con --crf: usa bitrate objetivo.
+  --bitrate <n>        Bitrate con --aceleracion (12M por defecto).
+  --cache <MB>         Memoria para fotogramas de video ya decodificados. Con
+                       muchos tramos cortos, subirlo evita redecodificar.
   --frames <a>-<b>     Renderiza solo ese rango de fotogramas. Imprescindible
                        para probar el estilo sin esperar el render completo:
                        --frames 0-2700 son los primeros 90 s a 30 fps.
@@ -409,23 +415,48 @@ const principal = async () => {
     console.log(`Solo fotogramas ${rango[0]}-${rango[1]} de ${compo.durationInFrames}`);
   }
 
-  await renderMedia({
+  // La aceleración por hardware depende del equipo y del driver. Si no hay
+  // codificador o falla, no tiene sentido perder el render entero: se repite
+  // por software. Mejor tardar más que quedarse sin nada tras horas.
+  const opcionesDeRender = (conAceleracion) => ({
     composition: compo,
     frameRange: rango,
     serveUrl,
     codec: String(args.codec ?? 'h264'),
-    crf: numero(args.crf, 18),
+    // El codificador por hardware no admite CRF: hay que darle un bitrate
+    // objetivo. Si se pasan ambos, Remotion desactiva la aceleración en
+    // silencio y el render sigue yendo igual de lento.
+    crf: conAceleracion ? null : numero(args.crf, 18),
+    videoBitrate: conAceleracion ? String(args.bitrate ?? '12M') : null,
     outputLocation: salida,
     inputProps: props,
     browserExecutable: navegador ?? undefined,
     chromiumOptions: process.platform === 'linux' ? {gl: 'swangle'} : {},
     concurrency: args.concurrencia === undefined ? null : numero(args.concurrencia),
     timeoutInMilliseconds: numero(args.timeout, 28000),
+    hardwareAcceleration: conAceleracion ? 'if-possible' : 'disable',
+    offthreadVideoCacheSizeInBytes:
+      args.cache === undefined ? null : numero(args.cache) * 1024 * 1024,
     overwrite: true,
     onProgress: ({progress}) => {
       process.stdout.write(`\r  render ${Math.round(progress * 100)}%   `);
     },
   });
+
+  try {
+    await renderMedia(opcionesDeRender(Boolean(args.aceleracion)));
+  } catch (error) {
+    if (!args.aceleracion) {
+      throw error;
+    }
+
+    process.stdout.write('\n');
+    console.warn(
+      `El codificador por hardware falló (${error.message.split('\n')[0]}).\n` +
+        'Repitiendo por software con CRF. Quita --aceleracion para evitar el intento.',
+    );
+    await renderMedia(opcionesDeRender(false));
+  }
 
   process.stdout.write('\n');
   console.log(`Listo: ${salida}`);
