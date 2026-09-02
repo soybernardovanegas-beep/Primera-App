@@ -85,6 +85,40 @@ export const esquemaUnirClips = z.object({
   fundidoEntreClips: z.number().min(0),
 });
 
+export const esquemaSegmento = z.object({
+  /** Segundo del video ORIGINAL en el que empieza el tramo que se conserva. */
+  desde: z.number().min(0),
+  hasta: z.number().min(0),
+});
+
+export const esquemaSinSilencios = z.object({
+  fuente: z.string(),
+  /** Tramos a conservar, en tiempo del original. Los genera scripts/silencios.mjs. */
+  segmentos: z.array(esquemaSegmento),
+  fps: z.number().min(1).max(120),
+  ancho: z.number().min(2),
+  alto: z.number().min(2),
+  ajuste: z.enum(['contener', 'cubrir']),
+  colorFondo: zColor(),
+  volumen: z.number().min(0).max(2),
+  /**
+   * Fundido de audio a cada lado de cada corte, en segundos. Sin esto, cortar
+   * una onda por la mitad produce un chasquido audible en cada empalme.
+   */
+  rampaAudio: z.number().min(0).max(1),
+  /** Zoom lento que alterna de sentido en cada tramo: disimula los saltos de corte. */
+  zoomSutil: z.boolean(),
+  /** Cuánto amplía el zoom. 0.03 = 3 %. Por encima de 0.08 se nota y marea. */
+  intensidadZoom: z.number().min(0).max(0.3),
+  marcaDeAgua: esquemaMarcaDeAgua,
+  /** En segundos del video YA cortado. */
+  subtitulos: z.array(esquemaSubtitulo),
+  fundidoEntrada: z.number().min(0),
+  fundidoSalida: z.number().min(0),
+});
+
+export type PropsSinSilencios = z.infer<typeof esquemaSinSilencios>;
+export type Segmento = z.infer<typeof esquemaSegmento>;
 export type PropsEditarVideo = z.infer<typeof esquemaEditarVideo>;
 export type PropsUnirClips = z.infer<typeof esquemaUnirClips>;
 export type Subtitulo = z.infer<typeof esquemaSubtitulo>;

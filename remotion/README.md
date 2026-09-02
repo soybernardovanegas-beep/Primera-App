@@ -67,6 +67,52 @@ leer archivos servidos desde ahí). También acepta URLs `http(s)`.
 
 Las salidas van a `salidas/` por defecto.
 
+## Quitar silencios automáticamente
+
+Es un flujo de dos comandos. Primero se analiza el audio y se decide qué
+tramos conservar; después se monta el video con solo esos tramos.
+
+```bash
+# 1. Analizar. No toca el original, solo escribe el informe.
+npm run silencios -- --entrada "D:/videos NMR/video 2/C0093.MP4" --json analisis/cortes.json
+
+# 2. Montar el resultado a 1080p.
+npm run render -- --cortes analisis/cortes.json --ancho 1920 --alto 1080 \
+  --salida salidas/video2-sin-silencios.mp4
+```
+
+El primer comando dice cuánto se va a recortar antes de renderizar nada:
+
+```
+Duración original:      26:45
+Duración sin silencios: 19:12
+Se recortan: 7:33 (28.2%) en 214 tramos
+```
+
+Parámetros del análisis (todos opcionales):
+
+| Bandera | Por defecto | Qué hace |
+| --- | --- | --- |
+| `--umbral <dBFS>` | -35 | Por debajo de esto se considera silencio |
+| `--pausaMaxima <seg>` | 0.6 | Solo se recortan los silencios más largos que esto |
+| `--margenAntes <seg>` | 0.15 | Aire antes de cada tramo, para no cortar el ataque de la voz |
+| `--margenDespues <seg>` | 0.25 | Aire después |
+| `--minimoSegmento <seg>` | 0.35 | Descarta restos muy breves, evita cortes epilépticos |
+
+El umbral es **adaptativo**: se mide el ruido de fondo real de la grabación
+(percentil 10 de la energía) y se usa el más exigente entre el umbral absoluto
+y `ruido + 8 dB`. Así funciona igual con una grabación muy limpia que con una
+ruidosa, sin tener que calibrar a mano.
+
+Dos detalles que marcan la diferencia en el resultado:
+
+- **Rampa de audio en cada empalme** (`--rampa`, 0.02 s). Cortar una onda a
+  media oscilación produce un chasquido audible en cada uno de los cientos de
+  empalmes. La rampa lo elimina.
+- **Zoom sutil alterno** (`--zoom`, 0.03 = 3 %). Cada tramo amplía muy poco,
+  alternando el sentido. El movimiento continuo disimula el salto de imagen,
+  que en un plano fijo se nota mucho. `--zoom 0` lo desactiva.
+
 ## Cómo está organizado
 
 | Ruta | Qué es |
@@ -75,8 +121,11 @@ Las salidas van a `salidas/` por defecto.
 | `src/esquemas.ts` | Esquemas zod de las props: definen también el formulario del Studio |
 | `src/metadatos.ts` | Lee duración, tamaño y fps del video de origen (mediabunny) |
 | `src/composiciones/EditarVideo.tsx` | Edición de un video: recorte, velocidad, intro, subtítulos, marca, fundidos |
+| `src/composiciones/SinSilencios.tsx` | Monta el video conservando solo los tramos con voz |
 | `src/composiciones/UnirClips.tsx` | Concatena varios clips con fundido entre ellos |
 | `src/composiciones/Prueba.tsx` | Animación sin dependencias, para comprobar que el render funciona |
+| `scripts/silencios.mjs` | Detecta voz y silencio, genera la lista de cortes |
+| `scripts/ffmpeg.mjs` | Localiza el ffmpeg/ffprobe que Remotion ya trae |
 | `scripts/render.mjs` | CLI de render programático |
 | `scripts/navegador.mjs` | Localiza el Chromium a usar |
 | `ejemplos/` | JSON de ejemplo con props completas |

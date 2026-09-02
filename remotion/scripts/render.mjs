@@ -30,7 +30,9 @@ Opciones principales
   --entrada <ruta>     Video de origen. Puede ser una ruta de tu disco o una URL http(s).
                        Si está fuera de public/, se copia a public/entradas/.
   --salida <ruta>      Archivo de salida (por defecto salidas/<nombre>-editado.mp4).
-  --composicion <id>   EditarVideo (por defecto) o UnirClips.
+  --composicion <id>   EditarVideo (por defecto), SinSilencios o UnirClips.
+  --cortes <archivo>   Informe de scripts/silencios.mjs. Implica SinSilencios:
+                       monta el video conservando solo los tramos con voz.
   --props <archivo>    JSON con las props completas. Lo que pases por bandera lo sobreescribe.
 
 Edición
@@ -47,6 +49,10 @@ Edición
   --marca-pos <p>      arriba-izquierda | arriba-derecha | abajo-izquierda | abajo-derecha | centro
   --subtitulos <f>     JSON con [{"desde":0,"hasta":3,"texto":"..."}].
   --fundidos <seg>     Fundido de entrada y de salida.
+
+Sin silencios (con --cortes)
+  --zoom <n>           Zoom sutil que disimula los cortes. 0 lo desactiva (0.03 por defecto).
+  --rampa <seg>        Fundido de audio en cada empalme, evita chasquidos (0.02 por defecto).
 
 Formato
   --ancho <px>         Por defecto, el del original.
@@ -239,6 +245,46 @@ const PROPS_BASE = {
   fundidoSalida: 0,
 };
 
+/** Convierte el informe de scripts/silencios.mjs en props de SinSilencios. */
+const propsDesdeCortes = (args) => {
+  const informe = JSON.parse(readFileSync(String(args.cortes), 'utf-8'));
+
+  if (!informe.segmentos?.length) {
+    throw new Error('El informe de cortes no tiene segmentos.');
+  }
+
+  // Los fps salen del informe (fracción exacta de ffprobe), no de una
+  // suposición: con material NTSC, 30 en vez de 29.97 desincroniza el final.
+  const fps = numero(args.fps, informe.video?.fps ?? 30);
+
+  return {
+    fuente: prepararEntrada(informe.fuente),
+    segmentos: informe.segmentos,
+    fps,
+    ancho: numero(args.ancho, 1920),
+    alto: numero(args.alto, 1080),
+    ajuste: String(args.ajuste ?? 'contener'),
+    colorFondo: '#000000',
+    volumen: numero(args.volumen, 1),
+    rampaAudio: numero(args.rampa, 0.02),
+    zoomSutil: numero(args.zoom, 0.03) > 0,
+    intensidadZoom: numero(args.zoom, 0.03),
+    marcaDeAgua: {
+      texto: args.marca ? String(args.marca) : '',
+      imagen: args['marca-imagen'] ? String(args['marca-imagen']) : '',
+      posicion: String(args['marca-pos'] ?? 'abajo-derecha'),
+      opacidad: 0.85,
+      tamano: 36,
+      color: '#ffffff',
+    },
+    subtitulos: args.subtitulos
+      ? JSON.parse(readFileSync(String(args.subtitulos), 'utf-8'))
+      : [],
+    fundidoEntrada: numero(args.fundidos, 0.5),
+    fundidoSalida: numero(args.fundidos, 0.8),
+  };
+};
+
 const nombreDeSalida = (props, composicion) => {
   const base = esUrl(props.fuente ?? '')
     ? composicion
@@ -255,10 +301,13 @@ const principal = async () => {
     return;
   }
 
-  const composicion = String(args.composicion ?? 'EditarVideo');
+  // --cortes implica SinSilencios: es el flujo habitual tras analizar el audio.
+  const composicion = String(args.composicion ?? (args.cortes ? 'SinSilencios' : 'EditarVideo'));
 
   let props;
-  if (args.props) {
+  if (args.cortes) {
+    props = propsDesdeCortes(args);
+  } else if (args.props) {
     const desdeArchivo = JSON.parse(readFileSync(String(args.props), 'utf-8'));
     props =
       composicion === 'EditarVideo'
@@ -268,6 +317,10 @@ const principal = async () => {
     props = propsDesdeArgumentos(args, PROPS_BASE);
   } else {
     throw new Error('Para UnirClips hay que pasar las props con --props <archivo.json>.');
+  }
+
+  if (composicion === 'SinSilencios' && !args.cortes && !args.props) {
+    throw new Error('Para SinSilencios hay que pasar --cortes <informe.json> o --props <archivo.json>.');
   }
 
   if (composicion === 'EditarVideo' && !props.fuente) {

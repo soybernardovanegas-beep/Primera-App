@@ -13,7 +13,8 @@
     "browser": "remotion browser ensure",
     "typecheck": "tsc --noEmit",
     "upgrade": "remotion upgrade",
-    "muestra": "remotion render Prueba public/entradas/muestra.mp4"
+    "muestra": "remotion render Prueba public/entradas/muestra.mp4",
+    "silencios": "node scripts/silencios.mjs"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.520",
