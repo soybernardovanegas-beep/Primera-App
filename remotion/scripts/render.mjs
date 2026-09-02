@@ -68,7 +68,11 @@ Formato
   --ajuste <modo>      contener (por defecto) | cubrir
   --codec <codec>      h264 (por defecto), h265, vp8, vp9, prores, gif...
   --crf <n>            Calidad: más bajo = mejor. 18 por defecto.
-  --concurrencia <n>   Procesos en paralelo.
+  --concurrencia <n>   Procesos en paralelo. En un disco MECÁNICO conviene
+                       bajarlo (2-3): muchos procesos compitiendo por el
+                       cabezal provocan más búsquedas y van más lento.
+  --timeout <ms>       Espera máxima por fotograma (28000 por defecto). Súbelo
+                       si el origen es pesado o está en un disco lento.
   --frames <a>-<b>     Renderiza solo ese rango de fotogramas. Imprescindible
                        para probar el estilo sin esperar el render completo:
                        --frames 0-2700 son los primeros 90 s a 30 fps.
@@ -373,6 +377,7 @@ const principal = async () => {
     inputProps: props,
     browserExecutable: navegador ?? undefined,
     chromiumOptions: process.platform === 'linux' ? {gl: 'swangle'} : {},
+    timeoutInMilliseconds: numero(args.timeout, 28000),
   });
 
   console.log(
@@ -402,6 +407,7 @@ const principal = async () => {
     browserExecutable: navegador ?? undefined,
     chromiumOptions: process.platform === 'linux' ? {gl: 'swangle'} : {},
     concurrency: args.concurrencia === undefined ? null : numero(args.concurrencia),
+    timeoutInMilliseconds: numero(args.timeout, 28000),
     overwrite: true,
     onProgress: ({progress}) => {
       process.stdout.write(`\r  render ${Math.round(progress * 100)}%   `);

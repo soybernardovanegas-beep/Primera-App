@@ -54,6 +54,38 @@ diferencia importa: 320 cortes es una edición bastante más picada que 151.
 - `--frames a-b` para validar el estilo en 90 s en vez de en horas.
 - Cadencia NTSC exacta y enlace duro en vez de copia.
 
+## Cuello de botella del hardware (importante)
+
+El primer intento de render falló: `delayRender()` agotó los 28 s esperando el
+**primer** fotograma.
+
+Causa: el original es un 4K H.264 de ~12 GB y `D:` es un disco **mecánico**
+(Seagate ST1000LM035, 5400 rpm). Cada salto obliga a decodificar desde el
+keyframe anterior, y con 321 tramos el render salta constantemente.
+(`C:` es SSD NVMe pero solo tiene ~6 GB libres, así que no es alternativa.)
+
+La solución es editar sobre un **intermedio** con keyframes densos. Pero el
+intermedio **no puede ser 1080p**: la salida es 1080p y el encuadre alterno
+cierra el plano un 18 %, así que necesita 1920 x 1.18 = **2266 px** de origen.
+Con un proxy 1080p los tramos cerrados se verían blandos y los abiertos
+nítidos, alternando — peor que los jump-cuts que se querían tapar.
+
+Intermedio correcto: **2560x1440** (permite hasta 1.33x sin pérdida).
+
+```bash
+ffmpeg -i "D:/videos NMR/video 2/C0093.MP4" \
+  -vf scale=2560:1440 -c:v libx264 -preset veryfast -crf 18 -g 15 \
+  -c:a copy \
+  "D:/videos NMR/edicion/remotion/public/entradas/C0093_1440.mp4"
+```
+
+- `-g 15` (keyframe cada 0,5 s) hace los saltos mucho más baratos.
+- `-c:a copy` conserva el PCM original, así el análisis de silencios da
+  exactamente los mismos números que sobre el archivo original.
+
+Al renderizar sobre disco mecánico: `--concurrencia 2` o `3` (más procesos
+compiten por el cabezal y va más lento) y `--timeout 120000`.
+
 ## Pendiente
 
 1. **Renderizar la prueba de 90 s y juzgarla.** Es el siguiente paso.
