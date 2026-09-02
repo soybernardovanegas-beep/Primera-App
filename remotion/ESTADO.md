@@ -119,6 +119,31 @@ por salto pasan a 15 fotogramas 1440p). El caudal nunca fue el problema: a
 Al renderizar sobre disco mecánico: `--concurrencia 2` o `3` (más procesos
 compiten por el cabezal y va más lento) y `--timeout 120000`.
 
+## Coste de render: Remotion vs ffmpeg (medido)
+
+En el equipo del usuario Remotion rinde **~1 fotograma/segundo** (Chrome
+headless + compositor por software, sin GPU, disco mecánico): 41.720
+fotogramas ≈ **11-12 horas**.
+
+Se midió la alternativa en ffmpeg con **321 tramos reales**, 720p, 4 núcleos:
+
+| Montaje | Tiempo | Ritmo |
+| --- | --- | --- |
+| `filter_complex` con deriva (`zoompan`) | 35,6 s | 1,18x tiempo real |
+| `filter_complex` sin deriva | 22,6 s | 1,86x tiempo real |
+| Trocear y concatenar | 36,3 s | — |
+
+Y escala **linealmente**: 464 ms/tramo con 60 tramos, 403 ms/tramo con 321.
+No se degrada con muchos tramos, así que trocear-y-concatenar no aporta nada
+sobre la pasada única (se comprobó porque era el riesgo esperado).
+
+Extrapolado a 1080p desde el intermedio 1440p: **~30-45 min sin deriva**,
+~50-70 min con ella. Es decir, 15-20x más rápido que Remotion.
+
+**La deriva del zoom (`zoompan`) cuesta 1,6x** y es el elemento que menos
+aporta: lo que disimula los cortes es el punch alterno, no la deriva. En la
+ruta ffmpeg conviene renunciar a ella.
+
 ## Pendiente
 
 1. **Renderizar la prueba de 90 s y juzgarla.** Es el siguiente paso.
