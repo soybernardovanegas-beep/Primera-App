@@ -12,6 +12,7 @@ import {mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {dirname, join, resolve} from 'node:path';
 import {ffmpeg, ffprobe} from './ffmpeg.mjs';
+import {avisoFaststart} from './mp4.mjs';
 
 /** Milisegundos que dura cada ventana de análisis. */
 const VENTANA_MS = 20;
@@ -243,7 +244,15 @@ if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split(/[\\/]/).p
     if (args[clave] !== undefined) opciones[clave] = Number(args[clave]);
   }
 
-  const informe = analizarSilencios(resolve(String(args.entrada)), opciones);
+  const entrada = resolve(String(args.entrada));
+
+  // Se avisa antes de nada: es el fallo que más caro sale descubrir tarde.
+  const aviso = avisoFaststart(entrada);
+  if (aviso) {
+    console.warn(aviso);
+  }
+
+  const informe = analizarSilencios(entrada, opciones);
 
   console.log(`\nArchivo:  ${informe.fuente}`);
   if (informe.video) {

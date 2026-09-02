@@ -14,6 +14,7 @@ import {renderMedia, selectComposition} from '@remotion/renderer';
 import {copyFileSync, existsSync, linkSync, mkdirSync, readFileSync, statSync, symlinkSync} from 'node:fs';
 import {basename, dirname, isAbsolute, join, relative, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {avisoFaststart} from './mp4.mjs';
 import {resolverNavegador} from './navegador.mjs';
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -354,6 +355,18 @@ const principal = async () => {
     : nombreDeSalida(props, composicion);
 
   mkdirSync(dirname(salida), {recursive: true});
+
+  // Comprobar el origen ANTES de empaquetar y renderizar: un moov al final
+  // no da un error claro, solo un timeout tras minutos de espera.
+  const fuentes = composicion === 'UnirClips' ? props.clips.map((c) => c.fuente) : [props.fuente];
+  for (const fuente of fuentes) {
+    if (fuente && !esUrl(fuente)) {
+      const aviso = avisoFaststart(join(DIR_PUBLICO, fuente));
+      if (aviso) {
+        console.warn(aviso);
+      }
+    }
+  }
 
   const navegador = resolverNavegador();
   if (navegador) {

@@ -64,7 +64,24 @@ Causa: el original es un 4K H.264 de ~12 GB y `D:` es un disco **mecánico**
 keyframe anterior, y con 321 tramos el render salta constantemente.
 (`C:` es SSD NVMe pero solo tiene ~6 GB libres, así que no es alternativa.)
 
-La solución es editar sobre un **intermedio** con keyframes densos. Pero el
+**Causa raíz real (encontrada después):** el átomo `moov` del MP4 estaba AL
+FINAL del archivo. Remotion necesita el `moov` para decodificar cualquier
+fotograma, incluido el primero, así que tenía que recorrer los 12 GB enteros
+desde el HDD antes del frame 0. Por eso fallaba en `time=0.16` y no más
+adelante — el diagnóstico inicial ("saltos en disco lento") era incompleto.
+
+Se arregla sin recodificar, en segundos:
+
+```bash
+ffmpeg -i entrada.mp4 -c copy -movflags +faststart salida.mp4
+```
+
+El proyecto ahora **avisa solo** de esto antes de analizar o renderizar
+(`scripts/mp4.mjs`), porque sin el aviso el síntoma es un timeout sin causa
+aparente tras minutos de espera.
+
+Aparte de eso, editar sobre un **intermedio** con keyframes densos sigue
+mereciendo la pena por velocidad de render. Pero el
 intermedio **no puede ser 1080p**: la salida es 1080p y el encuadre alterno
 cierra el plano un 18 %, así que necesita 1920 x 1.18 = **2266 px** de origen.
 Con un proxy 1080p los tramos cerrados se verían blandos y los abiertos
