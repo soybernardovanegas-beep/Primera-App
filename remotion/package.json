@@ -1,0 +1,38 @@
+{
+  "name": "remotion-editor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Edición de video automatizada con Remotion",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "node scripts/render.mjs",
+    "still": "remotion still",
+    "compositions": "remotion compositions src/index.ts",
+    "probe": "remotion ffprobe",
+    "browser": "remotion browser ensure",
+    "typecheck": "tsc --noEmit",
+    "upgrade": "remotion upgrade",
+    "muestra": "remotion render Prueba public/entradas/muestra.mp4"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.520",
+    "@remotion/cli": "^4.0.520",
+    "@remotion/media": "^4.0.520",
+    "@remotion/media-parser": "^4.0.520",
+    "@remotion/media-utils": "^4.0.520",
+    "@remotion/renderer": "^4.0.520",
+    "@remotion/zod-types": "^4.0.520",
+    "mediabunny": "^1.55.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "remotion": "^4.0.520",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "typescript": "^5.9.2"
+  }
+}

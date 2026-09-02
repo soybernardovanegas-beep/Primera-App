@@ -1,0 +1,34 @@
+{
+  "fuente": "entradas/muestra.mp4",
+  "recorteDesde": 1,
+  "recorteHasta": 6,
+  "velocidad": 1,
+  "volumen": 1,
+  "silenciar": false,
+  "fps": null,
+  "ancho": null,
+  "alto": null,
+  "ajuste": "contener",
+  "colorFondo": "#000000",
+  "intro": {
+    "titulo": "Video 2",
+    "subtitulo": "NMR",
+    "duracion": 2,
+    "colorFondo": "#0f172a",
+    "colorTexto": "#ffffff"
+  },
+  "marcaDeAgua": {
+    "texto": "@nmr",
+    "imagen": "",
+    "posicion": "abajo-derecha",
+    "opacidad": 0.85,
+    "tamano": 32,
+    "color": "#ffffff"
+  },
+  "subtitulos": [
+    {"desde": 0, "hasta": 2.5, "texto": "Primer subtítulo"},
+    {"desde": 2.5, "hasta": 5, "texto": "Segundo subtítulo"}
+  ],
+  "fundidoEntrada": 0.5,
+  "fundidoSalida": 0.8
+}

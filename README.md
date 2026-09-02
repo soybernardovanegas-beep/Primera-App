@@ -102,3 +102,10 @@ supabase/
   schema.sql                       Tablas base (books, reading_progress) + RLS
   schema_kindle_features.sql       Tablas de funciones Kindle + RLS
 ```
+
+## Edición de video (carpeta `remotion/`)
+
+`remotion/` es un proyecto Node independiente de la app Flutter, para editar
+videos por código: recortar, acelerar, poner intro, marca de agua,
+subtítulos, fundidos y unir clips. No interviene en la compilación de la app.
+Ver [`remotion/README.md`](remotion/README.md).

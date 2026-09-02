@@ -1,0 +1,12 @@
+{
+  "clips": [
+    {"fuente": "entradas/muestra.mp4", "desde": 0, "hasta": 3, "silenciar": false},
+    {"fuente": "entradas/muestra.mp4", "desde": 5, "hasta": 8, "silenciar": true}
+  ],
+  "fps": 30,
+  "ancho": 1280,
+  "alto": 720,
+  "ajuste": "contener",
+  "colorFondo": "#000000",
+  "fundidoEntreClips": 0.4
+}

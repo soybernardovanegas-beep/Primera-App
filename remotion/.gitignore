@@ -1,0 +1,10 @@
+node_modules/
+build/
+out/
+.remotion/
+
+# Videos: no se versionan (son pesados). Las carpetas sí, para que existan.
+public/entradas/*
+!public/entradas/.gitkeep
+salidas/*
+!salidas/.gitkeep
