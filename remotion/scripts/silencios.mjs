@@ -232,7 +232,14 @@ if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split(/[\\/]/).p
   }
 
   const opciones = {};
-  for (const clave of ['umbral', 'pausaMaxima', 'margenAntes', 'margenDespues', 'minimoSegmento']) {
+  for (const clave of [
+    'umbral',
+    'margenRuido',
+    'pausaMaxima',
+    'margenAntes',
+    'margenDespues',
+    'minimoSegmento',
+  ]) {
     if (args[clave] !== undefined) opciones[clave] = Number(args[clave]);
   }
 

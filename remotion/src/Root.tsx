@@ -95,6 +95,9 @@ export const RemotionRoot: React.FC = () => {
           colorFondo: '#000000',
           volumen: 1,
           rampaAudio: 0.02,
+          encuadreAlterno: true,
+          intensidadPunch: 0.18,
+          puntoDeInteres: {x: 50, y: 42},
           zoomSutil: true,
           intensidadZoom: 0.03,
           marcaDeAgua: {

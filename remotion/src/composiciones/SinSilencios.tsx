@@ -44,18 +44,30 @@ const Tramo: React.FC<{
   const desdeEnFrames = Math.round(segmento.desde * fps);
   const rampa = Math.max(1, Math.round(props.rampaAudio * fps));
 
-  // El zoom alterna de sentido en cada tramo: el movimiento continuo disimula
-  // el salto de imagen del corte, que en un plano fijo canta mucho.
+  // Dos capas de movimiento, con propósitos distintos:
+  //
+  // 1. El encuadre alterna abierto/cerrado en cada corte. Esto es lo que
+  //    convierte un jump-cut en algo que se lee como cambio de cámara.
+  // 2. Un zoom lento dentro del tramo, alternando de sentido, para que la
+  //    imagen nunca esté completamente congelada.
+  const cerrado = props.encuadreAlterno && indice % 2 === 1;
+  const base = cerrado ? 1 + props.intensidadPunch : 1;
+
   const avance = duracion > 1 ? frame / (duracion - 1) : 0;
-  const escala = props.zoomSutil
-    ? indice % 2 === 0
-      ? 1 + props.intensidadZoom * avance
-      : 1 + props.intensidadZoom * (1 - avance)
-    : 1;
+  const deriva = props.zoomSutil
+    ? props.intensidadZoom * (indice % 2 === 0 ? avance : 1 - avance)
+    : 0;
+
+  const escala = base + deriva;
 
   return (
     <AbsoluteFill style={{overflow: 'hidden'}}>
-      <AbsoluteFill style={{transform: `scale(${escala})`}}>
+      <AbsoluteFill
+        style={{
+          transform: `scale(${escala})`,
+          transformOrigin: `${props.puntoDeInteres.x}% ${props.puntoDeInteres.y}%`,
+        }}
+      >
         <OffthreadVideo
           src={fuente}
           trimBefore={desdeEnFrames}

@@ -51,6 +51,10 @@ Edición
   --fundidos <seg>     Fundido de entrada y de salida.
 
 Sin silencios (con --cortes)
+  --punch <n>          Cierra el plano en los tramos alternos para ocultar los
+                       jump-cuts. 0.18 = 18 % (por defecto). 0 lo desactiva.
+  --punto-x <%>        Hacia dónde cierra el plano (50 por defecto).
+  --punto-y <%>        42 por defecto: algo por encima del centro, a la cara.
   --zoom <n>           Zoom sutil que disimula los cortes. 0 lo desactiva (0.03 por defecto).
   --rampa <seg>        Fundido de audio en cada empalme, evita chasquidos (0.02 por defecto).
 
@@ -267,6 +271,9 @@ const propsDesdeCortes = (args) => {
     colorFondo: '#000000',
     volumen: numero(args.volumen, 1),
     rampaAudio: numero(args.rampa, 0.02),
+    encuadreAlterno: numero(args.punch, 0.18) > 0,
+    intensidadPunch: numero(args.punch, 0.18),
+    puntoDeInteres: {x: numero(args['punto-x'], 50), y: numero(args['punto-y'], 42)},
     zoomSutil: numero(args.zoom, 0.03) > 0,
     intensidadZoom: numero(args.zoom, 0.03),
     marcaDeAgua: {

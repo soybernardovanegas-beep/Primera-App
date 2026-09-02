@@ -106,6 +106,20 @@ export const esquemaSinSilencios = z.object({
    * una onda por la mitad produce un chasquido audible en cada empalme.
    */
   rampaAudio: z.number().min(0).max(1),
+  /**
+   * Alterna el encuadre entre plano abierto y plano cerrado en cada corte.
+   * Es la forma estándar de ocultar los jump-cuts: el espectador lee el corte
+   * como un cambio de cámara intencionado, no como un salto. Con un origen 4K
+   * y salida 1080p hay margen para cerrar hasta 2x sin perder nitidez.
+   */
+  encuadreAlterno: z.boolean(),
+  /** Cuánto cierra el plano en los tramos alternos. 0.18 = 18 % más cerrado. */
+  intensidadPunch: z.number().min(0).max(1),
+  /**
+   * Hacia dónde se cierra el plano, en % del cuadro. En un plano de una
+   * persona hablando conviene apuntar algo por encima del centro, a la cara.
+   */
+  puntoDeInteres: z.object({x: z.number().min(0).max(100), y: z.number().min(0).max(100)}),
   /** Zoom lento que alterna de sentido en cada tramo: disimula los saltos de corte. */
   zoomSutil: z.boolean(),
   /** Cuánto amplía el zoom. 0.03 = 3 %. Por encima de 0.08 se nota y marea. */
