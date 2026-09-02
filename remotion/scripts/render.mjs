@@ -66,6 +66,9 @@ Formato
   --codec <codec>      h264 (por defecto), h265, vp8, vp9, prores, gif...
   --crf <n>            Calidad: más bajo = mejor. 18 por defecto.
   --concurrencia <n>   Procesos en paralelo.
+  --frames <a>-<b>     Renderiza solo ese rango de fotogramas. Imprescindible
+                       para probar el estilo sin esperar el render completo:
+                       --frames 0-2700 son los primeros 90 s a 30 fps.
 
   --ayuda              Muestra esta ayuda.
 `;
@@ -373,8 +376,20 @@ const principal = async () => {
       `${compo.durationInFrames} frames (${(compo.durationInFrames / compo.fps).toFixed(1)} s)`,
   );
 
+  // Rango parcial: permite validar el estilo en un minuto en vez de en horas.
+  let rango = null;
+  if (args.frames) {
+    const partes = String(args.frames).split('-').map(Number);
+    if (partes.length !== 2 || partes.some(Number.isNaN)) {
+      throw new Error('--frames espera un rango tipo 0-2700.');
+    }
+    rango = [partes[0], Math.min(partes[1], compo.durationInFrames - 1)];
+    console.log(`Solo fotogramas ${rango[0]}-${rango[1]} de ${compo.durationInFrames}`);
+  }
+
   await renderMedia({
     composition: compo,
+    frameRange: rango,
     serveUrl,
     codec: String(args.codec ?? 'h264'),
     crf: numero(args.crf, 18),
