@@ -264,6 +264,33 @@ if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split(/[\\/]/).p
       `en ${informe.segmentos.length} tramos`,
   );
 
+  // Distribución de los huecos y coste visual de cada umbral de reencuadre.
+  // Es la información que decide si el cambio de plano alterno va a quedar
+  // elegante o mareante, y solo se puede saber con los datos reales.
+  const huecos = informe.segmentos
+    .slice(1)
+    .map((s, i) => s.desde - informe.segmentos[i].hasta);
+
+  if (huecos.length) {
+    const media = huecos.reduce((a, b) => a + b, 0) / huecos.length;
+    console.log(
+      `\nHuecos eliminados: mín ${Math.min(...huecos).toFixed(2)} s · ` +
+        `media ${media.toFixed(2)} s · máx ${Math.max(...huecos).toFixed(2)} s`,
+    );
+
+    console.log('\nCambios de plano según --cambio-encuadre:');
+    for (const umbral of [0, 0.5, 0.8, 1.2, 1.6, 2, 2.5]) {
+      const cambios = huecos.filter((h) => h >= umbral).length;
+      const cada = cambios > 0 ? informe.duracionFinal / cambios : Infinity;
+      const nota =
+        cada >= 8 && cada <= 20 ? '  <- ritmo recomendado' : '';
+      console.log(
+        `  ${umbral.toFixed(1)} s -> ${String(cambios).padStart(4)} cambios ` +
+          `(uno cada ${cada === Infinity ? '—' : cada.toFixed(1) + ' s'})${nota}`,
+      );
+    }
+  }
+
   if (args.json) {
     const destino = resolve(String(args.json));
     mkdirSync(dirname(destino), {recursive: true});

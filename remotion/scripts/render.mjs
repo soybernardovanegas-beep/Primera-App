@@ -53,6 +53,9 @@ Edición
 Sin silencios (con --cortes)
   --punch <n>          Cierra el plano en los tramos alternos para ocultar los
                        jump-cuts. 0.18 = 18 % (por defecto). 0 lo desactiva.
+  --cambio-encuadre <seg>  Solo cambia de plano si el corte eliminó una pausa de
+                       al menos estos segundos (0.8 por defecto). Evita cambiar
+                       de encuadre en cada microcorte.
   --punto-x <%>        Hacia dónde cierra el plano (50 por defecto).
   --punto-y <%>        42 por defecto: algo por encima del centro, a la cara.
   --zoom <n>           Zoom sutil que disimula los cortes. 0 lo desactiva (0.03 por defecto).
@@ -276,6 +279,7 @@ const propsDesdeCortes = (args) => {
     rampaAudio: numero(args.rampa, 0.02),
     encuadreAlterno: numero(args.punch, 0.18) > 0,
     intensidadPunch: numero(args.punch, 0.18),
+    umbralCambioEncuadre: numero(args['cambio-encuadre'], 0.8),
     puntoDeInteres: {x: numero(args['punto-x'], 50), y: numero(args['punto-y'], 42)},
     zoomSutil: numero(args.zoom, 0.03) > 0,
     intensidadZoom: numero(args.zoom, 0.03),

@@ -116,6 +116,13 @@ export const esquemaSinSilencios = z.object({
   /** Cuánto cierra el plano en los tramos alternos. 0.18 = 18 % más cerrado. */
   intensidadPunch: z.number().min(0).max(1),
   /**
+   * Solo se cambia de encuadre cuando el corte elimina una pausa de al menos
+   * estos segundos. Sin esto, un material con muchos microcortes cambiaría de
+   * plano cada pocos segundos y marearía: un editor humano tampoco cambia de
+   * cámara para tapar una respiración, solo en las pausas de verdad.
+   */
+  umbralCambioEncuadre: z.number().min(0),
+  /**
    * Hacia dónde se cierra el plano, en % del cuadro. En un plano de una
    * persona hablando conviene apuntar algo por encima del centro, a la cara.
    */

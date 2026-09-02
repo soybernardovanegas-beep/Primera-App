@@ -16,6 +16,28 @@ import {aPar, resolverFuente} from '../metadatos';
 export const framesDeSegmentos = (segmentos: Segmento[], fps: number): number[] =>
   segmentos.map((s) => Math.max(1, Math.round((s.hasta - s.desde) * fps)));
 
+/**
+ * Decide el encuadre (0 = abierto, 1 = cerrado) de cada tramo.
+ *
+ * No alterna en cada corte: solo cuando el hueco eliminado justifica leerlo
+ * como un cambio de cámara. Los microcortes encadenados mantienen el encuadre,
+ * que es lo que hace un editor humano.
+ */
+export const encuadresDeSegmentos = (segmentos: Segmento[], umbral: number): number[] => {
+  let actual = 0;
+
+  return segmentos.map((segmento, i) => {
+    if (i > 0) {
+      const hueco = segmento.desde - segmentos[i - 1].hasta;
+      if (hueco >= umbral) {
+        actual = 1 - actual;
+      }
+    }
+
+    return actual;
+  });
+};
+
 export const calcularMetadatosSinSilencios: CalculateMetadataFunction<PropsSinSilencios> = ({
   props,
 }) => {
@@ -36,8 +58,9 @@ const Tramo: React.FC<{
   segmento: Segmento;
   duracion: number;
   indice: number;
+  encuadre: number;
   props: PropsSinSilencios;
-}> = ({fuente, segmento, duracion, indice, props}) => {
+}> = ({fuente, segmento, duracion, indice, encuadre, props}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
@@ -50,7 +73,7 @@ const Tramo: React.FC<{
   //    convierte un jump-cut en algo que se lee como cambio de cámara.
   // 2. Un zoom lento dentro del tramo, alternando de sentido, para que la
   //    imagen nunca esté completamente congelada.
-  const cerrado = props.encuadreAlterno && indice % 2 === 1;
+  const cerrado = props.encuadreAlterno && encuadre === 1;
   const base = cerrado ? 1 + props.intensidadPunch : 1;
 
   const avance = duracion > 1 ? frame / (duracion - 1) : 0;
@@ -93,6 +116,7 @@ export const SinSilencios: React.FC<PropsSinSilencios> = (props) => {
   const {fps} = useVideoConfig();
   const fuente = resolverFuente(props.fuente);
   const frames = framesDeSegmentos(props.segmentos, props.fps);
+  const encuadres = encuadresDeSegmentos(props.segmentos, props.umbralCambioEncuadre);
 
   return (
     <AbsoluteFill style={{backgroundColor: props.colorFondo}}>
@@ -108,6 +132,7 @@ export const SinSilencios: React.FC<PropsSinSilencios> = (props) => {
               segmento={segmento}
               duracion={frames[i]}
               indice={i}
+              encuadre={encuadres[i]}
               props={props}
             />
           </Series.Sequence>

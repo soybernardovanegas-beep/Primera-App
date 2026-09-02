@@ -97,6 +97,7 @@ export const RemotionRoot: React.FC = () => {
           rampaAudio: 0.02,
           encuadreAlterno: true,
           intensidadPunch: 0.18,
+          umbralCambioEncuadre: 0.8,
           puntoDeInteres: {x: 50, y: 42},
           zoomSutil: true,
           intensidadZoom: 0.03,
