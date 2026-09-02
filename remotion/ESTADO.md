@@ -83,6 +83,22 @@ ffmpeg -i "D:/videos NMR/video 2/C0093.MP4" \
 - `-c:a copy` conserva el PCM original, así el análisis de silencios da
   exactamente los mismos números que sobre el archivo original.
 
+**Tamaño real: ~8 GB** (38 Mbps de video + 0,3 GB de PCM), no los ~3 GB que
+se estimaron al principio. Hace falta espacio en `D:` para original (12 GB) +
+intermedio (8 GB) + salida (~1,5 GB) ≈ **21,5 GB**.
+
+Que pese 8 GB no invalida el intermedio: lo que arregla el cuello de botella
+no es el tamaño sino el coste de cada salto, que baja ~9x (60 fotogramas 4K
+por salto pasan a 15 fotogramas 1440p). El caudal nunca fue el problema: a
+38 Mbps con `--concurrencia 2` se piden 9,5 MB/s y el disco da 80-100 MB/s.
+
+### Verificar cuando termine el transcode
+
+1. El análisis debe seguir leyendo **29.970 fps**. Si dice 30, algo alteró la
+   cadencia y los subtítulos derivarían 1,6 s.
+2. El análisis debe reproducir **321 tramos y 3:33 recortados**. Si difiere,
+   el audio no se copió intacto.
+
 Al renderizar sobre disco mecánico: `--concurrencia 2` o `3` (más procesos
 compiten por el cabezal y va más lento) y `--timeout 120000`.
 
