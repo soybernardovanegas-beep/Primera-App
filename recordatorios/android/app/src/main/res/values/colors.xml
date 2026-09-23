@@ -3,4 +3,5 @@
     <color name="widget_background">#F2FFFFFF</color>
     <color name="widget_text">#FF1C1B1F</color>
     <color name="widget_text_secondary">#FF605D66</color>
+    <color name="ic_launcher_background">#EF6C00</color>
 </resources>
