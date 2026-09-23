@@ -33,7 +33,7 @@ class NotificationService {
       tz.setLocalLocation(tz.getLocation(local.identifier));
       await _plugin.initialize(
         settings: const InitializationSettings(
-          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          android: AndroidInitializationSettings('ic_notification'),
           iOS: DarwinInitializationSettings(),
         ),
       );

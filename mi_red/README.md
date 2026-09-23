@@ -119,6 +119,24 @@ al teléfono y ábrelo; Android te pedirá permitir instalar apps de origen
 desconocido. La primera vez, acepta el permiso de **notificaciones** para
 recibir los avisos de tus recordatorios.
 
+## Nombre e ícono
+
+- En el teléfono la app aparece como **Mi Red**; el nombre se define en
+  `android/app/src/main/AndroidManifest.xml` (`android:label`) y en
+  `ios/Runner/Info.plist` (`CFBundleDisplayName`).
+- El ícono es un diamante formado por una red de contactos, en dorado sobre
+  fondo oscuro. Incluye la versión adaptable de Android (círculo, gota,
+  cuadrado), la monocromática para los íconos temáticos de Android 13+, la
+  silueta blanca de las notificaciones y la pantalla de carga oscura.
+- Se genera con código, así que se puede ajustar (colores, tamaño) y volver
+  a crear:
+
+  ```bash
+  pip install pillow
+  python3 tool/make_icon.py
+  dart run flutter_launcher_icons
+  ```
+
 ## Estructura
 
 ```
@@ -156,4 +174,5 @@ lib/
   screens/sales_screen.dart        Ventas por mes
 supabase/schema.sql, schema_v2.sql Tablas y políticas RLS
 test/                              Pruebas de modelos, calificación e importación
+tool/make_icon.py                  Genera el ícono y sus variantes
 ```
