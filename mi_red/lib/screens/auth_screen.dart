@@ -70,9 +70,23 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Mi Red',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(text: 'Mi'),
+                        TextSpan(
+                          text: 'Red',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        const TextSpan(text: ' 💎'),
+                      ],
+                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -111,6 +125,9 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                     ),
                   FilledButton(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size.fromHeight(52),
+                    ),
                     onPressed: _isLoading ? null : _submit,
                     child: _isLoading
                         ? const SizedBox(

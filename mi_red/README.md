@@ -1,41 +1,102 @@
-# Mi Red
+# Mi Red 💎
 
-CRM para tu negocio de network marketing, pensado para usarse desde el
-celular Android (también compila para iOS). Guarda tus datos en Supabase, así
-que no se pierden si cambias de teléfono y puedes usar varios dispositivos.
+CRM para tu negocio de network marketing, pensado para el celular Android
+(también compila para iOS). Tus datos viven en Supabase: no se pierden si
+cambias de teléfono y puedes usar varios dispositivos.
 
-## Qué hace
+## Pantallas
 
-- **Hoy**: seguimientos del día y atrasados (con botón directo a WhatsApp),
-  ventas y puntos del mes, contactos nuevos, número de socios y tu embudo
-  por etapa.
-- **Contactos**: tu lista de prospectos, clientes y socios con búsqueda y
-  filtro por etapa (Nuevo → Contactado → Presentación → Seguimiento →
-  Cliente / Socio, o No interesado). Cada ficha tiene:
-  - Llamar y abrir WhatsApp con un toque.
-  - Cambio de etapa con un toque.
-  - Próximo seguimiento: mañana, en 3 días, en 1 semana o fecha a elegir.
-  - Historial de interacciones (llamada, WhatsApp, reunión, presentación).
-  - Sus compras y el total que te ha comprado.
-- **Equipo**: árbol de tu red. Cuando un contacto pasa a *Socio* y le
-  indicas quién lo patrocinó, se acomoda debajo de esa persona.
-- **Ventas**: pedidos por mes con monto, puntos (PV) y a quién se vendió.
-  Al registrar una venta a un prospecto, pasa automáticamente a *Cliente*.
+La barra inferior tiene **Inicio · CRM · (+) · Proceso · Más**.
+
+- **Inicio**: tu día (recordatorios vencidos y de hoy, llamadas hechas),
+  acceso a la Hora de Poder, ventas y puntos del mes, calidad de tu lista
+  (Ideal / Potencial / Incierto) y tu embudo por etapa.
+- **CRM**: meta "X de 20 contactos ideales", importar/exportar, filtros
+  (temperatura, favoritos, etapa, etiqueta, origen), pestañas
+  Total / Ideal 🦈 / Potencial 🐬 / Incierto 🦔 y búsqueda por nombre,
+  teléfono o etiqueta. Mantén presionado un contacto (o toca el ícono ☑)
+  para seleccionar varios y cambiarles la etapa, la temperatura o
+  eliminarlos.
+- **(+) Nuevo contacto**: nombre, teléfono, referido por, origen, etiquetas,
+  enfoque y temperatura → **Comenzar Calificación** (4 preguntas):
+
+  | Pregunta | Opciones (puntos) |
+  |---|---|
+  | Edad | 18–25 (2) · 26–45 (3) · 46+ (1) |
+  | Credibilidad | Nula (1) · Parcial (3) · Total (5) |
+  | Actitud y solvencia | No emprendedor sin/con solvencia (1/2) · Emprendedor sin/con solvencia (4/6) |
+  | Comportamiento social | Erizo (1) · Ballena (2) · Delfín (4) · Tiburón (6) |
+
+  Total sobre 20: **Ideal 🦈 15–20**, **Potencial 🐬 10–14**,
+  **Incierto 🦔 9 o menos** (se cambia en `lib/models/qualification.dart`).
+- **Proceso**: buscador, filtro Producto / Negocio / Ambos, guías
+  (Objeciones, Prospección, Redes, Seguimiento), Hora de Poder,
+  recordatorios **Vencidos** y **Próximos** con ✓ para completarlos, y las
+  tarjetas de cada etapa con llamar, WA, Sugerir, No interesado,
+  **Avanzar →**, favorito y eliminar. Los contactos pausados o descartados
+  no aparecen aquí.
+- **Ficha del contacto**: Modo Llamada en Vivo, teléfono con Llamar /
+  WhatsApp / Sugerir, etiquetas, puntuación (y recalificar), etapa, enfoque
+  de conversación, **recordatorios múltiples** (al completar uno aparece el
+  siguiente; cada uno se puede enviar por WhatsApp, a Google Calendar o como
+  archivo .ics, y tiene "Insertar Mi Porqué"), **Contactar después**
+  (3, 6, 10 meses o 1 año), notas, **Su Porqué** (ingresos y salud),
+  historial y compras. Las notas y el porqué se guardan solos.
+- **Modo Llamada en Vivo**: el guion según el enfoque (producto o negocio,
+  con tu porqué incluido), respuestas a objeciones y botones de resultado:
+  - *No contestó* → recordatorio mañana a la misma hora.
+  - *Agendó cita* → eliges fecha y hora, pasa a Presentación.
+  - *Seguimiento* → recordatorio en 3 días, pasa a Seguimiento.
+  - *No interesado* → pasa a No interesado.
+
+  Cada resultado queda en el historial.
+- **Hora de Poder**: cronómetro de 60 min con la pantalla siempre
+  encendida y una fila de llamadas (primero los vencidos, luego mayor
+  puntaje y los calientes). Cuenta tus llamadas y resultados.
+- **Sugerir**: mensajes de WhatsApp listos según la etapa y el enfoque,
+  usando el nombre y su porqué. Son plantillas (sin IA, sin costo) que puedes
+  editar antes de enviar; están en `lib/content/message_templates.dart`.
+- **Más**: mi perfil (nombre, **Mi Porqué**, meta de ideales), mi equipo
+  (árbol de socios), ventas, guías y guiones (editables desde la app),
+  contactos pausados/descartados, importar, exportar y cerrar sesión.
+
+### Importar y exportar
+
+- Acepta **.xlsx**, **.csv**, **.vcf** (contactos del teléfono o del
+  iPhone) o pegar filas copiadas de Excel / Google Sheets.
+- Columnas: **Nombre** (obligatoria), Teléfono, Referido, Origen,
+  Etiquetas (también reconoce Ciudad, Correo, Notas). Si no hay
+  encabezados, se asume ese orden.
+- Antes de guardar muestra una vista previa y desmarca los posibles
+  duplicados (mismo teléfono o mismo nombre).
+- **Exportar** genera un CSV que abre en Excel y se puede volver a
+  importar. Sirve para traer tus contactos de otra app: exporta desde allá e
+  importa aquí.
+
+### WhatsApp y teléfonos
+
+A los números de 10 dígitos se les agrega automáticamente el **57**
+(Colombia) para WhatsApp. Si el número empieza con `+` se respeta tal cual.
+Si escribiste una nota en el campo del teléfono (p. ej. "está en
+Instagram"), la app no intenta llamar.
 
 ## Configuración
 
 1. Copia `.env.example` a `.env` y coloca tu URL y llave pública de
-   Supabase (puedes usar el mismo proyecto del lector EPUB y Bitácora):
+   Supabase (puede ser el mismo proyecto del lector EPUB y Bitácora):
 
    ```
    SUPABASE_URL=https://tu-proyecto.supabase.co
    SUPABASE_ANON_KEY=tu-clave-publica
    ```
 
-2. En el SQL Editor de Supabase, ejecuta [`supabase/schema.sql`](supabase/schema.sql).
-   Crea las tablas `crm_contacts`, `crm_interactions` y `crm_sales` con Row
-   Level Security (cada usuario solo ve sus propios datos). No modifica las
-   tablas de las otras apps.
+2. En el **SQL Editor** de Supabase ejecuta, en orden:
+   1. [`supabase/schema.sql`](supabase/schema.sql): contactos,
+      interacciones y ventas.
+   2. [`supabase/schema_v2.sql`](supabase/schema_v2.sql): calificación,
+      recordatorios, perfil y guías. Si ya usabas la versión anterior, pasa
+      tus "próximo seguimiento" a recordatorios. No borra datos y se puede
+      ejecutar más de una vez.
 
 ## Instalar en tu Android
 
@@ -54,35 +115,45 @@ flutter build apk --release
 ```
 
 El archivo queda en `build/app/outputs/flutter-apk/app-release.apk`. Pásalo
-al teléfono (Drive, WhatsApp, cable) y ábrelo; Android te pedirá permitir
-instalar apps de origen desconocido.
-
-## Notas
-
-- Los teléfonos deben incluir la **clave de país** (p. ej. `52` México,
-  `57` Colombia, `1` EE. UU.) para que el botón de WhatsApp funcione.
-- El símbolo de moneda es `$`; se cambia en `lib/widgets/common.dart`.
-- Ícono fuente en `assets/icon/icon.png`. Si lo cambias, vuelve a correr
-  `dart run flutter_launcher_icons`.
+al teléfono y ábrelo; Android te pedirá permitir instalar apps de origen
+desconocido. La primera vez, acepta el permiso de **notificaciones** para
+recibir los avisos de tus recordatorios.
 
 ## Estructura
 
 ```
 lib/
-  main.dart                         Inicializa Supabase y el flujo auth → app
-  models/contact.dart               Contacto, etapas del embudo e interés
-  models/interaction.dart           Interacciones (llamada, WhatsApp, ...)
-  models/sale.dart                  Venta con monto y puntos
-  services/crm_service.dart         Todas las consultas a Supabase
-  widgets/common.dart               Avatar, chip de etapa, llamar/WhatsApp
-  screens/auth_screen.dart          Login / registro
-  screens/home_shell.dart           Navegación inferior (Hoy/Contactos/Equipo/Ventas)
-  screens/dashboard_screen.dart     Resumen del día
-  screens/contacts_screen.dart      Lista con búsqueda y filtros
-  screens/contact_detail_screen.dart Ficha, seguimiento e historial
-  screens/contact_form_screen.dart  Alta / edición de contacto
-  screens/team_screen.dart          Árbol de socios
-  screens/sales_screen.dart         Ventas por mes y formulario de venta
-supabase/schema.sql                 Tablas + políticas RLS
-test/contact_test.dart              Pruebas de modelos
+  main.dart                        Supabase, tema oscuro/dorado, avisos, auth → app
+  content/guides.dart              Textos de guías y guiones (editables en la app)
+  content/message_templates.dart   Plantillas de "Sugerir"
+  models/contact.dart              Contacto, etapas, enfoque, temperatura, "Avanzar"
+  models/qualification.dart        Las 4 preguntas, puntos y categorías
+  models/reminder.dart             Recordatorios y el vigente por contacto
+  models/profile.dart              Tu nombre, tu porqué y tu meta
+  models/interaction.dart          Llamadas, WhatsApp, reuniones...
+  models/sale.dart                 Ventas con monto y puntos
+  services/crm_service.dart        Todas las consultas a Supabase
+  services/notification_service.dart  Avisos programados en el teléfono
+  services/import_export.dart      Lectura de CSV/Excel/vCard y exportación
+  services/calendar_links.dart     Google Calendar, .ics y compartir archivos
+  widgets/common.dart              Componentes y colores compartidos
+  widgets/sheets.dart              Nuevo recordatorio, Sugerir, enviar a calendario
+  widgets/bulk.dart                Acciones sobre varios contactos
+  screens/home_shell.dart          Barra inferior con el botón (+)
+  screens/home_screen.dart         Inicio
+  screens/crm_screen.dart          CRM
+  screens/process_screen.dart      Proceso de negocios
+  screens/more_screen.dart         Más (y contactos pausados)
+  screens/contact_form_screen.dart Nuevo / editar contacto
+  screens/qualification_screen.dart Cuestionario de calificación
+  screens/contact_detail_screen.dart Ficha del contacto
+  screens/call_mode_screen.dart    Modo Llamada en Vivo
+  screens/power_hour_screen.dart   Hora de Poder
+  screens/guides_screen.dart       Guías (ver y editar)
+  screens/import_screen.dart       Importar contactos
+  screens/profile_screen.dart      Mi perfil
+  screens/team_screen.dart         Árbol de tu equipo
+  screens/sales_screen.dart        Ventas por mes
+supabase/schema.sql, schema_v2.sql Tablas y políticas RLS
+test/                              Pruebas de modelos, calificación e importación
 ```
