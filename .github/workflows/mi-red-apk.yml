@@ -1,0 +1,51 @@
+# Compila el APK de Mi Red en los servidores de GitHub (no usa el disco de tu
+# computadora). Se ejecuta solo al subir cambios de mi_red/ o manualmente
+# desde la pestaña Actions. El APK queda en "Artifacts" del resultado.
+name: Mi Red APK
+
+on:
+  push:
+    paths:
+      - 'mi_red/**'
+      - '.github/workflows/mi-red-apk.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mi_red
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.7'
+          channel: stable
+          cache: true
+
+      # .env no está en el repositorio. La llave publishable de Supabase es
+      # pública por diseño (va dentro de la app); si prefieres, crea los
+      # secretos SUPABASE_URL y SUPABASE_ANON_KEY en Settings → Secrets.
+      - name: Crear .env
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://ftjycrbadkdnhvjnimgz.supabase.co' }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'sb_publishable_-e6nU1iY6EgLCYNOJpljSw_vq37NCp0' }}
+        run: |
+          printf 'SUPABASE_URL=%s\nSUPABASE_ANON_KEY=%s\n' "$SUPABASE_URL" "$SUPABASE_ANON_KEY" > .env
+
+      - run: flutter pub get
+      - run: flutter test
+      - run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mi-red-apk
+          path: mi_red/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
