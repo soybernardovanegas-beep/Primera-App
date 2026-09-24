@@ -14,16 +14,24 @@ class NotificationService {
 
   final _plugin = FlutterLocalNotificationsPlugin();
 
-  static const _details = NotificationDetails(
-    android: AndroidNotificationDetails(
-      'recordatorios',
-      'Recordatorios',
-      channelDescription: 'Avisos a la hora de cada recordatorio',
-      importance: Importance.max,
-      priority: Priority.high,
-      category: AndroidNotificationCategory.reminder,
-      visibility: NotificationVisibility.public,
-    ),
+  static final _details = NotificationDetails(android: _androidDetails());
+
+  static NotificationDetails _longTextDetails(String text) =>
+      NotificationDetails(
+        android: _androidDetails(BigTextStyleInformation(text)),
+      );
+
+  static AndroidNotificationDetails _androidDetails([
+    StyleInformation? style,
+  ]) => AndroidNotificationDetails(
+    'recordatorios',
+    'Recordatorios',
+    channelDescription: 'Avisos a la hora de cada recordatorio',
+    importance: Importance.max,
+    priority: Priority.high,
+    category: AndroidNotificationCategory.reminder,
+    visibility: NotificationVisibility.public,
+    styleInformation: style,
   );
 
   AndroidFlutterLocalNotificationsPlugin? get _android => _plugin
@@ -68,10 +76,7 @@ class NotificationService {
     await cancel(r);
     if (!r.enabled) return;
 
-    final exact = await _android?.canScheduleExactNotifications() ?? true;
-    final mode = exact
-        ? AndroidScheduleMode.exactAllowWhileIdle
-        : AndroidScheduleMode.inexactAllowWhileIdle;
+    final mode = await _scheduleMode();
     final body = r.note.isEmpty ? null : r.note;
     final now = DateTime.now();
 
@@ -108,5 +113,41 @@ class NotificationService {
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
       );
     }
+  }
+
+  // Las preguntas del diario usan ids desde 900000, lejos de los de los
+  // recordatorios (id*10 + 0..7).
+  static const _questionBaseId = 900000;
+  static const _questionSlots = 14;
+
+  /// Programa la pregunta diaria del diario para los próximos días, una
+  /// notificación por día porque la pregunta cambia cada día.
+  Future<void> scheduleDailyQuestions(
+    List<({DateTime at, String question})> items,
+  ) async {
+    for (var i = 0; i < _questionSlots; i++) {
+      await _plugin.cancel(id: _questionBaseId + i);
+    }
+    final mode = await _scheduleMode();
+    final now = DateTime.now();
+    var i = 0;
+    for (final item in items.where((e) => e.at.isAfter(now))) {
+      if (i >= _questionSlots) break;
+      await _plugin.zonedSchedule(
+        id: _questionBaseId + i++,
+        title: 'Recordatorio del día',
+        body: item.question,
+        scheduledDate: tz.TZDateTime.from(item.at, tz.local),
+        notificationDetails: _longTextDetails(item.question),
+        androidScheduleMode: mode,
+      );
+    }
+  }
+
+  Future<AndroidScheduleMode> _scheduleMode() async {
+    final exact = await _android?.canScheduleExactNotifications() ?? true;
+    return exact
+        ? AndroidScheduleMode.exactAllowWhileIdle
+        : AndroidScheduleMode.inexactAllowWhileIdle;
   }
 }
