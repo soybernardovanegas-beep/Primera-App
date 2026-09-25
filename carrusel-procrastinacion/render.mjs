@@ -1,0 +1,13 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.PW);
+import path from 'path';
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1200, height: 1500 } });
+await p.goto('file://' + path.resolve('carrusel.html'));
+await p.evaluate(() => document.fonts.ready);
+await p.waitForTimeout(500);
+const fams = await p.evaluate(async () => { await Promise.all([...document.fonts].map(f=>f.load())); return [...document.fonts].map(f=>f.family+":"+f.status); });
+console.log(fams);
+for (let i = 1; i <= 8; i++) await p.locator('#s' + i).screenshot({ path: `slides/slide-${i}.png` });
+await b.close();
