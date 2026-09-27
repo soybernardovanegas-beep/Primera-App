@@ -315,4 +315,20 @@ class CrmService {
   Future<void> resetGuide(String key) async {
     await _client.from('crm_guides').delete().eq('key', key);
   }
+
+  // ---------- Privacidad ----------
+
+  /// Borra todos los datos de Mi Red del usuario (no su cuenta).
+  Future<void> deleteMyCrmData() async {
+    await _client.rpc('delete_my_crm_data');
+    await NotificationService.instance.clear();
+  }
+
+  /// Elimina la cuenta del usuario y todos sus datos, y cierra la sesión.
+  Future<void> deleteMyAccount() async {
+    await _client.rpc('delete_my_account');
+    await NotificationService.instance.clear();
+    // La sesión local ya no es válida; se limpia sin llamar al servidor.
+    await _client.auth.signOut(scope: SignOutScope.local);
+  }
 }

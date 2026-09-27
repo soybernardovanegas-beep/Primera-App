@@ -12,6 +12,7 @@ import '../widgets/common.dart';
 import 'contact_detail_screen.dart';
 import 'guides_screen.dart';
 import 'import_screen.dart';
+import 'privacy_screen.dart';
 import 'profile_screen.dart';
 import 'sales_screen.dart';
 import 'team_screen.dart';
@@ -131,6 +132,9 @@ class _MoreScreenState extends State<MoreScreen> {
         item(Icons.download_outlined, 'Exportar contactos', _export,
             subtitle: 'Archivo CSV para Excel o respaldo'),
         const _SectionLabel('Cuenta'),
+        item(Icons.shield_outlined, 'Privacidad y datos',
+            () => _push(const PrivacyScreen()),
+            subtitle: 'Política de privacidad, borrar datos o la cuenta'),
         ListTile(
           leading: const Icon(Icons.logout),
           title: const Text('Cerrar sesión'),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'privacy_screen.dart';
+
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
@@ -137,6 +139,22 @@ class _AuthScreenState extends State<AuthScreen> {
                           )
                         : Text(_isSignUp ? 'Registrarme' : 'Entrar'),
                   ),
+                  if (_isSignUp)
+                    TextButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const PrivacyPolicyScreen(),
+                        ),
+                      ),
+                      child: const Text(
+                        'Al registrarte aceptas la Política de privacidad',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
                   TextButton(
                     onPressed: _isLoading
                         ? null

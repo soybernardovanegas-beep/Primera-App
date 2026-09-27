@@ -97,6 +97,8 @@ Instagram"), la app no intenta llamar.
       recordatorios, perfil y guías. Si ya usabas la versión anterior, pasa
       tus "próximo seguimiento" a recordatorios. No borra datos y se puede
       ejecutar más de una vez.
+   3. [`supabase/schema_v3.sql`](supabase/schema_v3.sql): permite borrar tus
+      datos o eliminar tu cuenta desde la app (Más → Privacidad y datos).
 
 ## Instalar en tu Android
 
@@ -118,6 +120,14 @@ El archivo queda en `build/app/outputs/flutter-apk/app-release.apk`. Pásalo
 al teléfono y ábrelo; Android te pedirá permitir instalar apps de origen
 desconocido. La primera vez, acepta el permiso de **notificaciones** para
 recibir los avisos de tus recordatorios.
+
+## Publicar en Google Play
+
+La app ya incluye política de privacidad, borrado de datos y de cuenta,
+respaldos desactivados para la sesión, código ofuscado y firma de
+publicación configurable. Los pasos en Play Console (llave de firma,
+formulario de Seguridad de los datos, Play Integrity y publicación
+administrada) están en [`PLAY_STORE.md`](PLAY_STORE.md).
 
 ## Nombre e ícono
 

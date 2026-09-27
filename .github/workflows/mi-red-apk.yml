@@ -1,6 +1,9 @@
-# Compila el APK de Mi Red en los servidores de GitHub (no usa el disco de tu
+# Compila Mi Red en los servidores de GitHub (no usa el disco de tu
 # computadora). Se ejecuta solo al subir cambios de mi_red/ o manualmente
-# desde la pestaña Actions. El APK queda en "Artifacts" del resultado.
+# desde la pestaña Actions. Los archivos quedan en "Artifacts":
+#   mi-red-apk   APK para instalar directo en el teléfono.
+#   mi-red-aab   App Bundle para subir a Google Play (solo si configuraste
+#                la llave de firma; ver mi_red/PLAY_STORE.md).
 name: Mi Red APK
 
 on:
@@ -16,6 +19,11 @@ jobs:
     defaults:
       run:
         working-directory: mi_red
+    env:
+      # Llave de firma para Google Play, guardada en Settings → Secrets.
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+      # Número de versión que Google Play exige que aumente en cada subida.
+      BUILD_NUMBER: ${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
 
@@ -40,12 +48,56 @@ jobs:
         run: |
           printf 'SUPABASE_URL=%s\nSUPABASE_ANON_KEY=%s\n' "$SUPABASE_URL" "$SUPABASE_ANON_KEY" > .env
 
+      - name: Preparar llave de firma
+        if: env.HAS_KEYSTORE == 'true'
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload-keystore.jks"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload-keystore.jks" >> "$GITHUB_ENV"
+
       - run: flutter pub get
+      - run: flutter analyze
       - run: flutter test
-      - run: flutter build apk --release
+
+      # --obfuscate dificulta leer el código de la app; los símbolos se
+      # guardan aparte para poder leer los errores si algo falla.
+      - name: Compilar APK
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: >
+          flutter build apk --release
+          --build-number="$BUILD_NUMBER"
+          --obfuscate --split-debug-info=build/symbols
+
+      - name: Compilar App Bundle para Google Play
+        if: env.HAS_KEYSTORE == 'true'
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: >
+          flutter build appbundle --release
+          --build-number="$BUILD_NUMBER"
+          --obfuscate --split-debug-info=build/symbols
 
       - uses: actions/upload-artifact@v4
         with:
           name: mi-red-apk
           path: mi_red/build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: env.HAS_KEYSTORE == 'true'
+        with:
+          name: mi-red-aab
+          path: mi_red/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mi-red-symbols
+          path: mi_red/build/symbols
+          retention-days: 90
