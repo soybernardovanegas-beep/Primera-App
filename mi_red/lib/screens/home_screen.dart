@@ -182,9 +182,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: r.isOverdue(now) ? theme.colorScheme.error : gold,
                       ),
                       title: Text(r.contactName),
-                      subtitle: r.note.isEmpty
-                          ? null
-                          : Text(r.note, maxLines: 1, overflow: TextOverflow.ellipsis),
+                      subtitle: Text(
+                        [appointmentLabel(r.dueAt), if (r.note.isNotEmpty) r.note]
+                            .join('\n'),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => _open(r.contactId),
                     ),

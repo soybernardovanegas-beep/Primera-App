@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../content/message_templates.dart';
@@ -150,14 +149,14 @@ class _NewReminderSheetState extends State<_NewReminderSheet> {
                   child: OutlinedButton.icon(
                     onPressed: _pickDate,
                     icon: const Icon(Icons.event_outlined),
-                    label: Text(DateFormat('EEE d MMM y', 'es').format(_dueAt)),
+                    label: Text(appointmentLabel(_dueAt, withTime: false)),
                   ),
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton.icon(
                   onPressed: _pickTime,
                   icon: const Icon(Icons.schedule_outlined),
-                  label: Text(DateFormat('HH:mm').format(_dueAt)),
+                  label: Text(timeLabel(_dueAt)),
                 ),
               ],
             ),
@@ -215,7 +214,7 @@ Future<void> showReminderShareSheet(
           ListTile(
             title: Text(title),
             subtitle: Text(
-                DateFormat("EEEE d 'de' MMMM, HH:mm", 'es').format(reminder.dueAt)),
+                appointmentLabel(reminder.dueAt)),
           ),
           if (contact.hasPhone)
             ListTile(

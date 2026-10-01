@@ -10,6 +10,29 @@ import '../models/reminder.dart';
 final currencyFormat = NumberFormat(r'$ #,##0', 'es');
 final pointsFormat = NumberFormat.decimalPattern('es');
 
+/// Hora en formato de 12 horas: "6:53 p. m.".
+String timeLabel(DateTime d) => DateFormat('h:mm a', 'es').format(d);
+
+/// Fecha de una cita con el día de la semana, para no confundir días:
+/// "Hoy, jueves 1 oct · 6:53 p. m." o "Domingo 4 oct · 9:00 a. m.". El año
+/// solo aparece si no es el actual.
+String appointmentLabel(DateTime d, {bool withTime = true, DateTime? now}) {
+  final today = DateUtils.dateOnly(now ?? DateTime.now());
+  final days = DateUtils.dateOnly(d).difference(today).inDays;
+  var date = DateFormat('EEEE d MMM', 'es').format(d);
+  if (d.year != today.year) date += ' ${d.year}';
+  final relative = switch (days) {
+    0 => 'Hoy, ',
+    1 => 'Mañana, ',
+    -1 => 'Ayer, ',
+    _ => '',
+  };
+  final label = relative.isEmpty
+      ? '${date[0].toUpperCase()}${date.substring(1)}'
+      : '$relative$date';
+  return withTime ? '$label · ${timeLabel(d)}' : label;
+}
+
 const gold = Color(0xFFC9A45C);
 
 class ContactAvatar extends StatelessWidget {
@@ -137,7 +160,7 @@ class ReminderBell extends StatelessWidget {
     return IconButton(
       tooltip: r == null
           ? 'Agregar recordatorio'
-          : DateFormat('d MMM, HH:mm', 'es').format(r.dueAt),
+          : appointmentLabel(r.dueAt),
       icon: Icon(icon, color: color),
       onPressed: onPressed,
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../content/guides.dart';
@@ -387,9 +386,7 @@ class _RemindersPanel extends StatelessWidget {
   Widget _tile(BuildContext context, Reminder r, {required bool overdue}) {
     final theme = Theme.of(context);
     final color = overdue ? theme.colorScheme.error : theme.colorScheme.outline;
-    final date = overdue
-        ? DateFormat('d MMM', 'es').format(r.dueAt)
-        : DateFormat('d MMM y · HH:mm', 'es').format(r.dueAt);
+    final date = appointmentLabel(r.dueAt);
     return Card(
       color: overdue
           ? theme.colorScheme.errorContainer.withValues(alpha: 0.25)

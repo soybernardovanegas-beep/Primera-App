@@ -566,7 +566,7 @@ class _RemindersCard extends StatelessWidget {
                   color: r.isOverdue(now) ? theme.colorScheme.error : gold,
                 ),
                 title: Text(
-                    DateFormat("EEE d MMM y · HH:mm", 'es').format(r.dueAt)),
+                    appointmentLabel(r.dueAt)),
                 subtitle: r.note.isEmpty ? null : Text('📝 ${r.note}'),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,

@@ -150,7 +150,12 @@ class _CallModeScreenState extends State<CallModeScreen> {
       if (reminderAt != null) {
         await _service.addReminder(contact.id, reminderAt, reminderNote);
       }
-      if (mounted) Navigator.of(context).pop(outcome);
+      if (!mounted) return;
+      if (reminderAt != null) {
+        final what = outcome == CallOutcome.agendo ? 'Cita' : 'Recordatorio';
+        showSnack(context, '$what: ${appointmentLabel(reminderAt)}');
+      }
+      Navigator.of(context).pop(outcome);
     } catch (_) {
       if (!mounted) return;
       setState(() => _saving = false);

@@ -8,6 +8,8 @@ import 'package:mi_red/screens/call_mode_screen.dart';
 import 'package:mi_red/screens/power_hour_screen.dart';
 import 'package:mi_red/services/calendar_links.dart';
 import 'package:mi_red/services/crm_service.dart';
+import 'package:mi_red/widgets/common.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 Map<String, dynamic> _row({
   String id = '1',
@@ -249,5 +251,32 @@ void main() {
 
   test('formatDateOnly', () {
     expect(formatDateOnly(DateTime(2026, 1, 5)), '2026-01-05');
+  });
+
+  group('Fechas de citas con día de la semana', () {
+    setUpAll(() => initializeDateFormatting('es'));
+    final now = DateTime(2026, 10, 1, 9); // jueves
+
+    test('muestra el día de la semana y la hora en 12 h', () {
+      final label = appointmentLabel(DateTime(2026, 10, 4, 18, 53), now: now);
+      expect(label, startsWith('Domingo 4 oct'));
+      expect(label, contains('6:53'));
+    });
+
+    test('hoy, mañana y ayer', () {
+      expect(appointmentLabel(DateTime(2026, 10, 1, 15), now: now),
+          startsWith('Hoy, jueves 1 oct'));
+      expect(appointmentLabel(DateTime(2026, 10, 2, 9), now: now),
+          startsWith('Mañana, viernes 2 oct'));
+      expect(appointmentLabel(DateTime(2026, 9, 30, 9), now: now),
+          startsWith('Ayer, miércoles 30 sept'));
+    });
+
+    test('el año solo aparece si no es el actual', () {
+      expect(
+        appointmentLabel(DateTime(2027, 1, 5), now: now, withTime: false),
+        'Martes 5 ene 2027',
+      );
+    });
   });
 }
