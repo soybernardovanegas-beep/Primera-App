@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'screens/auth_screen.dart';
 import 'screens/home_shell.dart';
+import 'screens/new_password_screen.dart';
 import 'services/crm_service.dart';
 import 'services/notification_service.dart';
 import 'widgets/common.dart';
@@ -118,6 +119,11 @@ class AuthGate extends StatefulWidget {
 class _AuthGateState extends State<AuthGate> {
   String? _syncedUser;
 
+  /// true tras abrir el enlace de "recuperar contraseña" del correo: se pide
+  /// la contraseña nueva antes de entrar a la app.
+  bool _recovering = false;
+  AuthState? _lastAuthState;
+
   /// Reprograma los avisos una vez por sesión iniciada.
   void _resyncNotifications(String userId) {
     if (_syncedUser == userId) return;
@@ -133,8 +139,25 @@ class _AuthGateState extends State<AuthGate> {
     return StreamBuilder<AuthState>(
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
+        // Cada evento se procesa una sola vez: al reconstruir con el mismo
+        // evento no se vuelve a pedir la contraseña.
+        final state = snapshot.data;
+        if (state != null && !identical(state, _lastAuthState)) {
+          _lastAuthState = state;
+          if (state.event == AuthChangeEvent.passwordRecovery) {
+            _recovering = true;
+          } else if (state.event == AuthChangeEvent.signedOut) {
+            _recovering = false;
+          }
+        }
         final session = snapshot.data?.session ??
             Supabase.instance.client.auth.currentSession;
+        if (session != null && _recovering) {
+          return NewPasswordScreen(
+            fromRecovery: true,
+            onDone: () => setState(() => _recovering = false),
+          );
+        }
         if (session != null) {
           _resyncNotifications(session.user.id);
           return const HomeShell();

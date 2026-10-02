@@ -100,6 +100,11 @@ Instagram"), la app no intenta llamar.
    3. [`supabase/schema_v3.sql`](supabase/schema_v3.sql): permite borrar tus
       datos o eliminar tu cuenta desde la app (Más → Privacidad y datos).
 
+3. En **Authentication → URL Configuration → Redirect URLs** agrega
+   `mired://login-callback/`. Así, los enlaces de los correos de
+   "confirmar cuenta" y "¿Olvidaste tu contraseña?" abren la app en el
+   teléfono.
+
 ## Instalar en tu Android
 
 Con el teléfono conectado por USB (y la depuración USB activada en

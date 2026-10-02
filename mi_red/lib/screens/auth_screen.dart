@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../services/auth_messages.dart';
 import 'privacy_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isSignUp = false;
   bool _isLoading = false;
   String? _errorMessage;
+  String? _infoMessage;
 
   @override
   void dispose() {
@@ -32,6 +34,7 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
+      _infoMessage = null;
     });
 
     final email = _emailController.text.trim();
@@ -40,20 +43,84 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       final auth = Supabase.instance.client.auth;
       if (_isSignUp) {
-        await auth.signUp(email: email, password: password);
-        if (mounted) {
+        final res = await auth.signUp(
+          email: email,
+          password: password,
+          emailRedirectTo: authRedirectUrl,
+        );
+        // Si el proyecto pide confirmar el correo, aún no hay sesión.
+        if (mounted && res.session == null) {
           setState(() {
-            _errorMessage =
-                'Cuenta creada. Revisa tu correo para confirmar el registro.';
+            _infoMessage = 'Cuenta creada. Abre en este teléfono el correo que '
+                'te enviamos y toca el enlace para confirmarla (revisa también '
+                'Spam).';
           });
         }
       } else {
         await auth.signInWithPassword(email: email, password: password);
       }
-    } on AuthException catch (e) {
-      setState(() => _errorMessage = e.message);
     } catch (e) {
-      setState(() => _errorMessage = 'Ocurrió un error inesperado.');
+      if (mounted) setState(() => _errorMessage = authErrorMessage(e));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// Envía un correo con un enlace que abre la app para elegir una
+  /// contraseña nueva.
+  Future<void> _forgotPassword() async {
+    final controller =
+        TextEditingController(text: _emailController.text.trim());
+    final email = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Recuperar contraseña'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Te enviaremos un correo con un enlace. Ábrelo en este '
+                'teléfono para elegir una contraseña nueva.'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              autofocus: true,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(labelText: 'Correo'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: const Text('Enviar'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (email == null) return;
+    if (!email.contains('@')) {
+      setState(() => _errorMessage = 'Escribe un correo válido.');
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+      _infoMessage = null;
+    });
+    try {
+      await Supabase.instance.client.auth
+          .resetPasswordForEmail(email, redirectTo: authRedirectUrl);
+      if (mounted) {
+        setState(() => _infoMessage = 'Listo. Revisa $email (también Spam) y '
+            'toca el enlace desde este teléfono.');
+      }
+    } catch (e) {
+      if (mounted) setState(() => _errorMessage = authErrorMessage(e));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -126,6 +193,17 @@ class _AuthScreenState extends State<AuthScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
+                  if (_infoMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        _infoMessage!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   FilledButton(
                     style: FilledButton.styleFrom(
                       minimumSize: const Size.fromHeight(52),
@@ -139,6 +217,11 @@ class _AuthScreenState extends State<AuthScreen> {
                           )
                         : Text(_isSignUp ? 'Registrarme' : 'Entrar'),
                   ),
+                  if (!_isSignUp)
+                    TextButton(
+                      onPressed: _isLoading ? null : _forgotPassword,
+                      child: const Text('¿Olvidaste tu contraseña?'),
+                    ),
                   if (_isSignUp)
                     TextButton(
                       onPressed: () => Navigator.of(context).push(
@@ -158,7 +241,11 @@ class _AuthScreenState extends State<AuthScreen> {
                   TextButton(
                     onPressed: _isLoading
                         ? null
-                        : () => setState(() => _isSignUp = !_isSignUp),
+                        : () => setState(() {
+                              _isSignUp = !_isSignUp;
+                              _errorMessage = null;
+                              _infoMessage = null;
+                            }),
                     child: Text(
                       _isSignUp
                           ? '¿Ya tienes cuenta? Inicia sesión'

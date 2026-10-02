@@ -12,6 +12,7 @@ import '../widgets/common.dart';
 import 'contact_detail_screen.dart';
 import 'guides_screen.dart';
 import 'import_screen.dart';
+import 'new_password_screen.dart';
 import 'privacy_screen.dart';
 import 'profile_screen.dart';
 import 'sales_screen.dart';
@@ -132,6 +133,8 @@ class _MoreScreenState extends State<MoreScreen> {
         item(Icons.download_outlined, 'Exportar contactos', _export,
             subtitle: 'Archivo CSV para Excel o respaldo'),
         const _SectionLabel('Cuenta'),
+        item(Icons.lock_reset, 'Cambiar contraseña',
+            () => _push(const NewPasswordScreen())),
         item(Icons.shield_outlined, 'Privacidad y datos',
             () => _push(const PrivacyScreen()),
             subtitle: 'Política de privacidad, borrar datos o la cuenta'),
