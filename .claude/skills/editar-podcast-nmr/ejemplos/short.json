@@ -1,0 +1,11 @@
+{
+  "formato": "vertical",
+  "fuente": "../material/C0093.MP4",
+  "cortes": "cortes.json",
+  "transcripcion": "transcripcion.json",
+  "rango": [[0, 9], [29.5, 34.5]],
+  "salida": "../entregas/shorts/short1_misma_compania.mp4",
+  "encuadre": {"niveles": [1.0, 1.12], "cambio_minimo": 0.8, "centro": [0.5, 0.45]},
+  "gancho": ["Misma compañía", "Resultados opuestos"],
+  "graficos": [{"tipo": "titulo", "t": 4.5, "dur": 2.5, "texto": "¿Qué las separa?"}]
+}

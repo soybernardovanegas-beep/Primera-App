@@ -1,0 +1,20 @@
+{
+  "fuente": "../material/C0093.MP4",
+  "cortes": "cortes.json",
+  "transcripcion": "transcripcion.json",
+  "salida": "../entregas/NMR_episodio.mp4",
+  "encuadre": {"niveles": [1.0, 1.18], "cambio_minimo": 0.8, "centro": [0.5, 0.42]},
+  "marca": {"desde": 0},
+  "graficos": [
+    {"tipo": "titulo", "t": 1.0, "dur": 2.2, "texto": "Mismo plan", "sub": "de compensación"},
+    {"tipo": "dato", "t": 4.0, "dur": 3, "arriba": "Renuncia en los primeros", "valor": "90 días"},
+    {"tipo": "panel", "t": 8.0, "dur": 3.5, "arriba": "La otra", "texto": "Libertad financiera", "grafica": true},
+    {"tipo": "pregunta", "t": 12.5, "dur": 2.5, "texto": "¿Qué las separa?"},
+    {"tipo": "portada", "t": 16, "dur": 3, "subtitulo": "6 ideas para crecer en network marketing"},
+    {"tipo": "lista", "t": 22, "dur": 5, "arriba": "6 ideas", "titulo": "Para crecer en\nnetwork marketing",
+     "items": ["El origen no te define", "Enfoque en lo que controlas", "La riqueza como responsabilidad"], "activo": 2},
+    {"tipo": "dato", "t": 30, "dur": 3, "posicion": "abajo", "arriba": "De las personas", "valor": "99%", "abajo": "cree que no va a llegar alto"},
+    {"tipo": "suscribete", "t": 42, "dur": 5},
+    {"tipo": "cierre", "dur": 4}
+  ]
+}
