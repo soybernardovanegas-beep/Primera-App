@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Opiniones vs. Hechos</title>
+<style>
+  :root{
+    --navy:#0A1830; --navy2:#10254A; --ivory:#F5F1E6; --ivory-dim:rgba(245,241,230,.72);
+    --lime:#C8F031; --line:rgba(245,241,230,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#222;font-family:"Inter",sans-serif;color:var(--ivory);
+       display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px 0}
+  .slide{width:1080px;height:1080px;position:relative;overflow:hidden;background:var(--navy)}
+  .display{font-family:"Inter Display";font-weight:900;letter-spacing:-.02em;line-height:.98;text-transform:uppercase}
+  .lime{color:var(--lime)}
+  .hl{background:var(--lime);color:var(--navy);padding:0 .14em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+  /* chrome shared by every slide */
+  .top{position:absolute;left:80px;right:80px;top:64px;display:flex;justify-content:space-between;
+       align-items:center;font-weight:700;font-size:20px;letter-spacing:.16em;text-transform:uppercase;z-index:5}
+  .top .brand b{color:var(--lime)}
+  .top .num{font-variant-numeric:tabular-nums;color:var(--ivory-dim)}
+  .bottom{position:absolute;left:80px;right:80px;bottom:60px;display:flex;justify-content:space-between;
+          align-items:center;font-size:19px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+          color:var(--ivory-dim);z-index:5}
+  .bottom .swipe{color:var(--lime);display:flex;align-items:center;gap:12px}
+  .bar{position:absolute;left:0;bottom:0;height:8px;background:var(--lime);z-index:6}
+
+  /* split layout: text left, photo right */
+  .text{position:absolute;left:80px;top:150px;bottom:130px;width:480px;display:flex;flex-direction:column;justify-content:center;z-index:4}
+  .panel{position:absolute;right:0;top:0;bottom:0;width:470px;overflow:hidden}
+  .panel img{width:100%;height:100%;object-fit:cover}
+  .panel::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--navy) 0%,rgba(10,24,48,0) 30%),linear-gradient(0deg,rgba(10,24,48,.85) 0%,rgba(10,24,48,0) 35%),linear-gradient(180deg,rgba(10,24,48,.8) 0%,rgba(10,24,48,0) 18%)}
+  .panel.flat::after{display:none}
+  .kicker{font-size:20px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--lime);margin-bottom:18px}
+  .title{font-size:58px;margin-bottom:36px}
+  .tag{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;font-size:17px;font-weight:800;letter-spacing:.2em;
+       text-transform:uppercase;padding:9px 16px;border:2px solid var(--ivory-dim);color:var(--ivory-dim);border-radius:999px;margin-bottom:16px}
+  .tag.ok{border-color:var(--lime);color:var(--navy);background:var(--lime)}
+  .opinion{font-family:"Inter Display";font-weight:800;font-size:38px;line-height:1.12;color:var(--ivory);
+           position:relative;padding-left:26px;border-left:6px solid var(--ivory-dim)}
+  .opinion s{text-decoration-color:var(--lime);text-decoration-thickness:4px}
+  .stamp{display:inline-block;margin-top:16px;font-size:16px;font-weight:800;letter-spacing:.2em;color:var(--ivory-dim)}
+  .stamp b{color:var(--lime)}
+  .rule{height:2px;background:var(--line);margin:34px 0}
+  .reflexion{font-size:28px;line-height:1.35;font-weight:500;color:var(--ivory)}
+  .reflexion b{font-weight:800;color:var(--lime)}
+
+  /* chips over photos */
+  .chips{position:absolute;right:40px;bottom:150px;display:flex;flex-direction:column;align-items:flex-end;gap:12px;z-index:4}
+  .chip{display:flex;align-items:center;gap:12px;background:rgba(10,24,48,.82);backdrop-filter:blur(6px);
+        border:1.5px solid rgba(200,240,49,.55);padding:12px 18px;border-radius:14px;font-size:20px;font-weight:700}
+  .chip svg{width:26px;height:26px;stroke:var(--lime);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+
+<!-- ============ 1 · PORTADA ============ -->
+<section class="slide" id="s1">
+  <svg width="0" height="0" style="position:absolute">
+    <filter id="glass" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="2" seed="7"/>
+      <feDisplacementMap in="SourceGraphic" scale="45" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </svg>
+  <div style="position:absolute;inset:0">
+    <img src="fotos/retrato-azul.jpg" style="position:absolute;left:0;top:-190px;width:1080px">
+    <!-- distorted glass, left half -->
+    <div style="position:absolute;left:0;top:0;bottom:0;width:540px;overflow:hidden">
+      <img src="fotos/retrato-azul.jpg" style="position:absolute;left:0;top:-190px;width:1080px;filter:url(#glass) saturate(.6) hue-rotate(-10deg) brightness(.85)">
+      <div style="position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.10),rgba(255,255,255,0) 40%,rgba(255,255,255,.08) 60%,rgba(255,255,255,0) 75%);mix-blend-mode:screen"></div>
+    </div>
+    <div style="position:absolute;left:538px;top:0;bottom:0;width:4px;background:var(--lime)"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(0deg,var(--navy) 0%,rgba(10,24,48,.92) 38%,rgba(10,24,48,0) 66%),linear-gradient(180deg,rgba(10,24,48,.7) 0%,rgba(10,24,48,0) 18%)"></div>
+  </div>
+  <div class="top"><span class="brand">Opiniones <b>vs.</b> Hechos</span><span class="num">01 / 08</span></div>
+  <div style="position:absolute;top:140px;left:80px;font-size:18px;font-weight:800;letter-spacing:.2em;padding:8px 14px;border:2px solid var(--ivory-dim);border-radius:999px;color:var(--ivory-dim);z-index:4">LO QUE CREES</div>
+  <div style="position:absolute;top:140px;right:80px;font-size:18px;font-weight:800;letter-spacing:.2em;padding:8px 14px;background:var(--lime);border-radius:999px;color:var(--navy);z-index:4">LO QUE ES</div>
+  <div style="position:absolute;left:80px;right:80px;bottom:140px;z-index:4">
+    <h1 class="display" style="font-size:92px">Una cosa son las <span class="lime">opiniones.</span><br>Otra cosa son los <span class="hl">hechos.</span></h1>
+    <p style="margin-top:28px;font-size:31px;font-weight:500;color:var(--ivory);line-height:1.3">¿Cuántas de tus creencias estás confundiendo con la realidad?</p>
+  </div>
+  <div class="bottom"><span>Pensamiento crítico</span><span class="swipe">Desliza <svg width="40" height="16" viewBox="0 0 40 16"><path d="M0 8h36M30 2l7 6-7 6" stroke="#C8F031" stroke-width="2.5" fill="none"/></svg></span></div>
+  <div class="bar" style="width:12.5%"></div>
+</section>
+
+<!-- ============ 2 · TRABAJO SEGURO ============ -->
+<section class="slide" id="s2">
+  <div class="panel" style="width:500px">
+    <img src="fotos/calle.jpg" style="object-position:62% 50%">
+    <svg viewBox="0 0 500 1080" style="position:absolute;inset:0;z-index:2">
+      <path d="M250 1080 C 250 960, 250 920, 250 880 C 250 820, 160 800, 110 760" stroke="#F5F1E6" stroke-width="5" fill="none" stroke-dasharray="2 14" stroke-linecap="round" opacity=".9"/>
+      <path d="M250 880 C 250 820, 360 760, 400 700" stroke="#C8F031" stroke-width="5" fill="none" stroke-dasharray="2 14" stroke-linecap="round"/>
+    </svg>
+    <div class="chip" style="position:absolute;left:30px;top:700px;z-index:3;font-size:16px;letter-spacing:.14em;border-color:var(--ivory-dim)">CAMINO TRADICIONAL</div>
+    <div class="chip" style="position:absolute;right:30px;top:640px;z-index:3;font-size:16px;letter-spacing:.14em;color:var(--lime)">CAMINO EMPRENDEDOR</div>
+  </div>
+  <div class="top"><span class="brand">Opiniones <b>vs.</b> Hechos</span><span class="num">02 / 08</span></div>
+  <div class="text" style="width:460px">
+    <div class="kicker">El mito del</div>
+    <h2 class="display title">Trabajo<br>seguro</h2>
+    <span class="tag">Opinión</span>
+    <p class="opinion">“Encuentra un trabajo seguro y permanece en él toda tu vida”.</p>
+    <div class="rule"></div>
+    <span class="tag ok">Reflexión</span>
+    <p class="reflexion">Un empleo puede ofrecer estabilidad, pero <b>ningún camino</b> está completamente libre de riesgos ni de cambios.</p>
+  </div>
+  <div class="bottom"><span>Suposición ≠ hecho</span><span class="swipe">Desliza <svg width="40" height="16" viewBox="0 0 40 16"><path d="M0 8h36M30 2l7 6-7 6" stroke="#C8F031" stroke-width="2.5" fill="none"/></svg></span></div>
+  <div class="bar" style="width:25%"></div>
+</section>
+
+<!-- ============ 3 · APARIENCIA Y RIQUEZA ============ -->
+<section class="slide" id="s3">
+  <div class="panel flat" style="background:linear-gradient(180deg,#0E2142,#0A1830)">
+    <svg viewBox="0 0 470 1080" style="position:absolute;inset:0">
+      <defs>
+        <linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7D58A"/><stop offset="1" stop-color="#E7A94B"/></linearGradient>
+        <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#F7D58A" stop-opacity=".35"/><stop offset="1" stop-color="#F7D58A" stop-opacity="0"/></radialGradient>
+      </defs>
+      <circle cx="235" cy="330" r="260" fill="url(#glow)"/>
+      <!-- house -->
+      <g stroke="#F5F1E6" stroke-width="3" fill="#13294F">
+        <path d="M40 470 L235 300 L430 470 Z"/>
+        <rect x="70" y="470" width="330" height="190"/>
+        <rect x="320" y="330" width="34" height="80" fill="#13294F"/>
+      </g>
+      <g fill="url(#win)">
+        <rect x="100" y="505" width="70" height="60"/><rect x="300" y="505" width="70" height="60"/>
+        <rect x="205" y="560" width="60" height="100"/><rect x="214" y="400" width="42" height="42"/>
+      </g>
+      <line x1="0" y1="660" x2="470" y2="660" stroke="#F5F1E6" stroke-width="3"/>
+          </svg>
+    <div style="position:absolute;left:40px;top:250px;font-size:16px;font-weight:800;letter-spacing:.2em;color:var(--ivory-dim)">LO QUE SE VE</div>
+    <div style="position:absolute;left:40px;right:40px;top:700px;font-size:16px;font-weight:800;letter-spacing:.2em;color:var(--lime);margin-bottom:10px">LO QUE NO SE VE</div>
+    <div style="position:absolute;left:40px;right:40px;top:740px;border:1.5px solid rgba(200,240,49,.55);border-radius:16px;background:rgba(10,24,48,.85);padding:10px 24px">
+      <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:22px;font-weight:700"><span>Activos</span><span class="lime">?</span></div>
+      <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:22px;font-weight:700"><span>Deudas</span><span class="lime">?</span></div>
+      <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:22px;font-weight:800"><span>Patrimonio real</span><span class="lime">?</span></div>
+    </div>
+  </div>
+  <div class="top"><span class="brand">Opiniones <b>vs.</b> Hechos</span><span class="num">03 / 08</span></div>
+  <div class="text">
+    <div class="kicker">La apariencia y</div>
+    <h2 class="display title">La riqueza</h2>
+    <span class="tag">Opinión</span>
+    <p class="opinion">“Tienen una casa grande. Deben ser ricos”.</p>
+    <div class="rule"></div>
+    <span class="tag ok">Reflexión</span>
+    <p class="reflexion">Lo que alguien posee no revela necesariamente su <b>patrimonio</b>, sus <b>deudas</b> ni su verdadera situación financiera.</p>
+  </div>
+  <div class="bottom"><span>Suposición ≠ hecho</span><span class="swipe">Desliza <svg width="40" height="16" viewBox="0 0 40 16"><path d="M0 8h36M30 2l7 6-7 6" stroke="#C8F031" stroke-width="2.5" fill="none"/></svg></span></div>
+  <div class="bar" style="width:37.5%"></div>
+</section>
+
+<!-- ============ 4 · MÚSCULOS Y SALUD ============ -->
+<section class="slide" id="s4">
+  <div class="panel"><img src="fotos/gym.jpg" style="position:absolute;top:70px;left:50%;transform:translateX(-50%);width:auto;height:1180px"></div>
+  <div class="chips">
+    <div class="chip"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Descanso</div>
+    <div class="chip"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg>Salud cardiovascular</div>
+    <div class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 13s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>Salud mental</div>
+    <div class="chip"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 4 13c0-5 5-9 16-9 0 11-4 16-9 16z"/><path d="M4 21c4-4 7-7 10-9"/></svg>Nutrición</div>
+    <div class="chip"><svg viewBox="0 0 24 24"><path d="M9 3h6v4H9zM5 5h4M15 5h4v16H5V5"/><path d="M9 13h6M12 10v6"/></svg>Chequeos médicos</div>
+  </div>
+  <div class="top"><span class="brand">Opiniones <b>vs.</b> Hechos</span><span class="num">04 / 08</span></div>
+  <div class="text" style="width:470px">
+    <div class="kicker">Los músculos y</div>
+    <h2 class="display title">La salud</h2>
+    <span class="tag">Opinión</span>
+    <p class="opinion">“Tiene músculos grandes. Debe estar sano”.</p>
+    <div class="rule"></div>
+    <span class="tag ok">Reflexión</span>
+    <p class="reflexion">La <b>apariencia física</b> no permite conocer por completo el estado de salud de una persona.</p>
+  </div>
+  <div class="bottom"><span>Suposición ≠ hecho</span><span class="swipe">Desliza <svg width="40" height="16" viewBox="0 0 40 16"><path d="M0 8h36M30 2l7 6-7 6" stroke="#C8F031" stroke-width="2.5" fill="none"/></svg></span></div>
+  <div class="bar" style="width:50%"></div>
+</section>
+
+<!-- ============ 5 · DINERO Y OPORTUNIDADES ============ -->
+<section class="slide" id="s5">
+  <div style="position:absolute;left:0;right:0;top:0;height:470px;overflow:hidden">
+    <img src="fotos/grupo.jpg" style="width:100%;height:100%;object-fit:cover;object-position:50% 45%">
+    <div style="position:absolute;inset:0;background:linear-gradient(0deg,var(--navy) 0%,rgba(10,24,48,0) 45%),linear-gradient(180deg,rgba(10,24,48,.75) 0%,rgba(10,24,48,0) 30%)"></div>
+    <div style="position:absolute;right:80px;bottom:40px;display:flex;gap:10px">
+      <span class="chip" style="font-size:18px;padding:9px 14px">Generar valor</span>
+      <span class="chip" style="font-size:18px;padding:9px 14px">Colaborar</span>
+      <span class="chip" style="font-size:18px;padding:9px 14px">Crear soluciones</span>
+    </div>
+  </div>
+  <div class="top"><span class="brand">Opiniones <b>vs.</b> Hechos</span><span class="num">05 / 08</span></div>
+  <div style="position:absolute;left:80px;right:80px;top:470px">
+    <div class="kicker">El dinero y</div>
+    <h2 class="display title" style="font-size:58px;margin-bottom:0">Las oportunidades</h2>
+  </div>
+  <div style="position:absolute;left:80px;right:80px;top:600px;bottom:130px;display:flex;gap:56px">
+    <div style="width:400px;flex:none;display:flex;flex-direction:column;justify-content:center">
+      <span class="tag">Opinión</span>
+      <p class="opinion" style="font-size:32px">“No hay suficiente dinero para que todos seamos ricos”.</p>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <span class="tag ok">Reflexión</span>
+      <p class="reflexion" style="font-size:26px">Las oportunidades pueden crearse, pero la <b>riqueza no está garantizada</b>. Aprender a generar valor, administrar recursos y tomar decisiones informadas puede ampliar tus posibilidades.</p>
+    </div>
+  </div>
+  <div class="bottom"><span>Suposición ≠ hecho</span><span class="swipe">Desliza <svg width="40" height="16" viewBox="0 0 40 16"><path d="M0 8h36M30 2l7 6-7 6" stroke="#C8F031" stroke-width="2.5" fill="none"/></svg></span></div>
+  <div class="bar" style="width:62.5%"></div>
+</section>
+
+<!-- ============ 6 · ERRORES E INTELIGENCIA ============ -->
+<section class="slide" id="s6">
+  <div class="panel"><img src="fotos/retrato-verde.jpg" style="object-position:55% 30%"></div>
+  <svg viewBox="0 0 470 330" style="position:absolute;right:0;bottom:110px;width:470px;height:330px;z-index:4">
+    <g font-family="Inter" font-weight="800" font-size="15" letter-spacing="2.4">
+      <path d="M40 270 L160 270 L160 200 L280 200 L280 130 L420 130" stroke="#C8F031" stroke-width="4" fill="none"/>
+      
+      <circle cx="100" cy="270" r="9" fill="#F5F1E6"/>
+      <circle cx="220" cy="200" r="9" fill="#C8F031"/>
+      <circle cx="350" cy="130" r="11" fill="#C8F031"/>
+      <path d="M392 82 l18 -22 l18 22 M410 60 v50" stroke="#C8F031" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <text x="62" y="252" fill="#F5F1E6">ERROR</text>
+      <text x="166" y="182" fill="#C8F031">APRENDER</text>
+      <text x="300" y="112" fill="#C8F031">MEJORAR</text>
+    </g>
+  </svg>
+  <div class="top"><span class="brand">Opiniones <b>vs.</b> Hechos</span><span class="num">06 / 08</span></div>
+  <div class="text" style="width:470px">
+    <div class="kicker">Los errores y</div>
+    <h2 class="display title">La<br>inteligencia</h2>
+    <span class="tag">Opinión</span>
+    <p class="opinion">“Las personas que cometen errores son estúpidas”.</p>
+    <div class="rule"></div>
+    <span class="tag ok">Reflexión</span>
+    <p class="reflexion">Cometer un error <b>no define tu inteligencia</b>. Lo importante es aprender, corregir y mejorar tus decisiones.</p>
+  </div>
+  <div class="bottom"><span>Suposición ≠ hecho</span><span class="swipe">Desliza <svg width="40" height="16" viewBox="0 0 40 16"><path d="M0 8h36M30 2l7 6-7 6" stroke="#C8F031" stroke-width="2.5" fill="none"/></svg></span></div>
+  <div class="bar" style="width:75%"></div>
+</section>
+
+<!-- ============ 7 · NEGOCIACIÓN Y RELACIONES ============ -->
+<section class="slide" id="s7">
+  <div class="top"><span class="brand">Opiniones <b>vs.</b> Hechos</span><span class="num">07 / 08</span></div>
+  <div style="position:absolute;left:80px;top:122px;font-size:20px;font-weight:800;letter-spacing:.18em;color:var(--ivory-dim)">LAS <span class="lime">SUPOSICIONES</span> NO SUSTITUYEN UNA CONVERSACIÓN</div>
+  <!-- block: negocios -->
+  <div style="position:absolute;left:80px;right:80px;top:180px;height:370px;border:1.5px solid var(--line);border-radius:22px;background:var(--navy2);display:flex;overflow:hidden">
+    <div style="flex:1;padding:34px 36px;display:flex;flex-direction:column;justify-content:center">
+      <div class="display" style="font-size:44px;margin-bottom:18px"><span class="lime">Negocios</span></div>
+      <p class="opinion" style="font-size:36px;padding-left:20px;margin-bottom:26px">“Él nunca venderá a un precio tan bajo”.</p>
+      <p class="reflexion" style="font-size:25px"><b>Reflexión:</b> Lo que supones sobre las decisiones de otra persona no sustituye una conversación ni una negociación real.</p>
+    </div>
+    <div style="width:250px;flex:none;background:linear-gradient(160deg,#16305C,#0A1830);display:flex;align-items:center;justify-content:center;border-left:1.5px solid var(--line)">
+      <svg viewBox="0 0 200 200" width="190" height="190" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <!-- table + two people negotiating -->
+        <circle cx="52" cy="58" r="20" stroke="#F5F1E6" stroke-width="4"/>
+        <circle cx="148" cy="58" r="20" stroke="#C8F031" stroke-width="4"/>
+        <path d="M22 130 v-22 a30 30 0 0 1 60 0 v22" stroke="#F5F1E6" stroke-width="4"/>
+        <path d="M118 130 v-22 a30 30 0 0 1 60 0 v22" stroke="#C8F031" stroke-width="4"/>
+        <path d="M10 132 h180" stroke="#F5F1E6" stroke-width="5"/>
+        <path d="M40 132 v40 M160 132 v40" stroke="#F5F1E6" stroke-width="4"/>
+        <rect x="76" y="114" width="48" height="18" rx="2" stroke="#F5F1E6" stroke-width="3"/>
+        <path d="M84 30 h32 M84 30 l8 -8 M116 30 l-8 8" stroke="#C8F031" stroke-width="3.5"/>
+      </svg>
+    </div>
+  </div>
+  <!-- block: relaciones -->
+  <div style="position:absolute;left:80px;right:80px;top:574px;height:370px;border:1.5px solid var(--line);border-radius:22px;background:var(--navy2);display:flex;overflow:hidden">
+    <div style="flex:1;padding:34px 36px;display:flex;flex-direction:column;justify-content:center">
+      <div class="display" style="font-size:44px;margin-bottom:18px"><span class="lime">Relaciones</span></div>
+      <p class="opinion" style="font-size:36px;padding-left:20px;margin-bottom:26px">“Ella nunca saldrá conmigo”.</p>
+      <p class="reflexion" style="font-size:25px"><b>Reflexión:</b> Suponer la respuesta de alguien puede cerrarte una puerta antes de intentarlo. Expresa tu interés con respeto y acepta su decisión.</p>
+    </div>
+    <div style="width:250px;flex:none;background:linear-gradient(160deg,#16305C,#0A1830);display:flex;align-items:center;justify-content:center;border-left:1.5px solid var(--line)">
+      <svg viewBox="0 0 200 200" width="190" height="190" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <!-- café: two cups + conversation bubbles -->
+        <path d="M18 112 h56 v26 a20 20 0 0 1 -20 20 h-16 a20 20 0 0 1 -20 -20 z" stroke="#F5F1E6" stroke-width="4"/>
+        <path d="M74 120 h6 a9 9 0 0 1 0 18 h-6" stroke="#F5F1E6" stroke-width="4"/>
+        <path d="M120 112 h56 v26 a20 20 0 0 1 -20 20 h-16 a20 20 0 0 1 -20 -20 z" stroke="#C8F031" stroke-width="4"/>
+        <path d="M120 120 h-6 a9 9 0 0 0 0 18 h6" stroke="#C8F031" stroke-width="4"/>
+        <path d="M8 172 h184" stroke="#F5F1E6" stroke-width="5"/>
+        <path d="M30 28 h56 a8 8 0 0 1 8 8 v22 a8 8 0 0 1 -8 8 h-38 l-12 12 v-12 h-6 a8 8 0 0 1 -8 -8 v-22 a8 8 0 0 1 8 -8z" stroke="#F5F1E6" stroke-width="3.5"/>
+        <path d="M114 46 h56 a8 8 0 0 1 8 8 v18 a8 8 0 0 1 -8 8 h-6 v12 l-12 -12 h-38 a8 8 0 0 1 -8 -8 v-18 a8 8 0 0 1 8 -8z" stroke="#C8F031" stroke-width="3.5"/>
+        <path d="M44 47 h28 M128 63 h28" stroke-width="3.5" stroke="#F5F1E6"/>
+      </svg>
+    </div>
+  </div>
+  <div class="bottom" style="bottom:52px"><span>Suposición ≠ hecho</span><span class="swipe">Desliza <svg width="40" height="16" viewBox="0 0 40 16"><path d="M0 8h36M30 2l7 6-7 6" stroke="#C8F031" stroke-width="2.5" fill="none"/></svg></span></div>
+  <div class="bar" style="width:87.5%"></div>
+</section>
+
+<!-- ============ 8 · CIERRE ============ -->
+<section class="slide" id="s8" style="background:radial-gradient(120% 80% at 50% -10%,#1B3768 0%,#0A1830 55%,#060F20 100%)">
+  <svg viewBox="0 0 1080 1080" style="position:absolute;inset:0">
+    <defs>
+      <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C8F031" stop-opacity=".55"/><stop offset=".6" stop-color="#C8F031" stop-opacity=".08"/><stop offset="1" stop-color="#C8F031" stop-opacity="0"/></linearGradient>
+      <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+    </defs>
+    <polygon points="900,-20 1010,-20 560,1100 260,1100" fill="url(#beam)" filter="url(#soft)" opacity=".7"/>
+    <polygon points="940,-20 975,-20 520,1100 430,1100" fill="url(#beam)" opacity=".5"/>
+    <circle cx="958" cy="-10" r="90" fill="#C8F031" opacity=".35" filter="url(#soft)"/>
+  </svg>
+  <div class="top"><span class="brand">Opiniones <b>vs.</b> Hechos</span><span class="num">08 / 08</span></div>
+  <div style="position:absolute;left:80px;right:80px;top:150px;bottom:110px;display:flex;flex-direction:column;z-index:4">
+    <h2 class="display" style="font-size:84px">No confundas lo que <span class="lime">crees</span> con lo que puedes <span class="hl">demostrar</span>.</h2>
+    <div style="display:flex;gap:40px;margin-top:44px;font-size:34px;font-weight:600;line-height:1.45">
+      <div style="border-left:5px solid var(--lime);padding-left:22px">Cuestiona tus creencias.<br>Busca <b class="lime" style="font-weight:900">EVIDENCIA</b>.<br>Mantén la mente abierta.</div>
+    </div>
+    <div style="margin-top:auto;background:var(--lime);color:var(--navy);border-radius:22px;padding:30px 36px">
+      <div style="font-size:17px;font-weight:800;letter-spacing:.2em;margin-bottom:10px;opacity:.75">TU TURNO</div>
+      <div class="display" style="font-size:42px;line-height:1.04">¿Qué opinión has confundido alguna vez con un hecho?</div>
+    </div>
+    <div style="margin-top:24px;display:flex;align-items:center;gap:22px;font-size:24px;font-weight:600">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C8F031" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+      <span>Cuéntamelo en los comentarios y comparte este carrusel</span>
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C8F031" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>
+    </div>
+  </div>
+  <div class="bar" style="width:100%"></div>
+</section>
+
+</body>
+</html>
