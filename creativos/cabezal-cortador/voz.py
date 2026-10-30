@@ -21,6 +21,10 @@ RATE = 24000
 GAP = 0.3       # silencio después de cada frase
 LEAD = 0.15     # silencio antes de la primera frase
 MIN_SEG = 0.8   # duración mínima de un tramo de video
+END_MIN = 3.5   # duración mínima de la tarjeta de cierre
+# oferta hablada sobre la tarjeta de cierre (igual en los 7 videos)
+CLOSE = ("Llévalo por solo $99.900 pesos, o dos por $169.900. "
+         "Envío a toda Colombia y pagas al recibir. ¡Escríbenos por WhatsApp!")
 
 # clip -> archivo (igual que build.py)
 sys.path.insert(0, S)
@@ -71,8 +75,8 @@ def request(text):
             msg = e.read().decode(errors="replace")
             m = re.search(r'"retryDelay":\s*"(\d+)', msg)  # 429: Gemini dice cuánto esperar
             if m:
-                wait = int(m.group(1)) + 2
-            if wait > 600:
+                wait = min(int(m.group(1)) + 2, 900)
+            if wait > 600 and "PerDay" in msg:
                 sys.exit(f"Cuota de {MODEL} agotada: {msg[:400]}")
             print("  reintento", attempt + 1, e.code, f"espera {wait}s", flush=True)
         except (urllib.error.URLError, KeyError, TimeoutError) as e:
@@ -93,6 +97,8 @@ def pick_cuts(sil, chars, total):
     """Elige len(chars)-1 pausas cuyo reparto se parezca más a la longitud de cada línea."""
     import math
     n, k = len(chars), len(sil)
+    if n == 1:
+        return []
     if k < n - 1:
         return None
     rate = total / sum(chars)
@@ -166,20 +172,22 @@ def tts_lines(lines):
 
 
 def groups(ad):
-    """Agrupa tramos: gancho (tramos iniciales sin subtítulo), cada subtítulo, y cierre (último tramo)."""
+    """Agrupa tramos: gancho (tramos iniciales sin subtítulo), cada subtítulo, y cierre (último tramo).
+    Devuelve (texto, índices de tramo, tipo) con tipo "hook", "cap" o "close"."""
     segs = ad["segments"]
     out, k = [], 0
     hook = []
     while k < len(segs) - 1 and not segs[k].get("cap"):
         hook.append(k)
         k += 1
-    out.append((" ".join(spoken(t) for t, *_ in ad["hook"]), hook, True))
+    out.append((" ".join(spoken(t) for t, *_ in ad["hook"]), hook, "hook"))
     while k < len(segs) - 1:
         cap, idx = segs[k]["cap"], []
         while k < len(segs) - 1 and segs[k].get("cap") == cap:
             idx.append(k)
             k += 1
-        out.append((cap, idx, False))
+        out.append((cap, idx, "cap"))
+    out.append((CLOSE, [len(segs) - 1], "close"))  # debe ir de último (ver main)
     return out
 
 
@@ -214,17 +222,18 @@ def main():
         print(ad["name"])
         t, parts = 0.0, []
         gs = groups(ad)
-        wavs = tts_lines([spoken(text) for text, *_ in gs])
-        for gi, ((text, idx, is_hook), wav) in enumerate(zip(gs, wavs)):
+        # el cierre es igual en todos: se pide una sola vez y se pega al final
+        wavs = tts_lines([spoken(text) for text, _, kind in gs if kind != "close"]) + tts_lines([spoken(CLOSE)])
+        for gi, ((text, idx, kind), wav) in enumerate(zip(gs, wavs)):
             d = dur(wav)
             start = LEAD if gi == 0 else 0.0
-            span = fit(ad, idx, start + d + GAP)
-            if is_hook:
+            span = fit(ad, idx, max(END_MIN, d + 2 * GAP) if kind == "close" else start + d + GAP)
+            if kind == "hook":
                 ad["hook_dur"] = round(span, 2)
             parts.append((wav, t + start))
             print(f"  {t:5.2f}s +{d:4.2f}s  {spoken(text)}", flush=True)
             t += span
-        total = t + ad["segments"][-1]["dur"]
+        total = t
         inputs, fc = [], ""
         for j, (wav, at) in enumerate(parts):
             inputs += ["-i", wav]
