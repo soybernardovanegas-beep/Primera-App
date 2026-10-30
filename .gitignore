@@ -46,3 +46,7 @@ app.*.map.json
 
 # Environment secrets
 .env
+creativos/*/raw/
+creativos/*/work/
+creativos/*/out/
+creativos/*/voz/cache/

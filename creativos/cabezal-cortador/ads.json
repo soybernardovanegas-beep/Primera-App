@@ -1,0 +1,461 @@
+[
+ {
+  "name": "AD1-lluvias-gotera",
+  "hook": [
+   [
+    "¿OTRA VEZ GOTERA?",
+    92,
+    "black",
+    "#FFD400"
+   ],
+   [
+    "Temporada de lluvias",
+    58,
+    "white",
+    "#E53935"
+   ]
+  ],
+  "end_headline": "Arregla el techo antes del próximo aguacero",
+  "segments": [
+   {
+    "clip": "c7",
+    "ss": 4.0,
+    "dur": 1.6
+   },
+   {
+    "clip": "c7",
+    "ss": 13.0,
+    "dur": 1.5
+   },
+   {
+    "clip": "c7",
+    "ss": 14.6,
+    "dur": 1.6,
+    "cap": "Cambia la teja dañada tú mismo"
+   },
+   {
+    "clip": "c7",
+    "ss": 16.4,
+    "dur": 1.4,
+    "cap": "Cambia la teja dañada tú mismo"
+   },
+   {
+    "clip": "c1",
+    "ss": 6.0,
+    "dur": 2.4,
+    "cap": "Pones el cabezal en tu taladro"
+   },
+   {
+    "clip": "c6",
+    "ss": 15.0,
+    "dur": 2.2,
+    "cap": "Cortas la teja a la medida en segundos"
+   },
+   {
+    "clip": "c7",
+    "ss": 17.2,
+    "dur": 1.8,
+    "cap": "Cortas la teja a la medida en segundos"
+   },
+   {
+    "clip": "c8",
+    "ss": 17.0,
+    "dur": 2.0,
+    "cap": "Y listo, antes del próximo aguacero"
+   },
+   {
+    "clip": "c7",
+    "ss": 4.6,
+    "dur": 1.5,
+    "cap": "Y listo, antes del próximo aguacero"
+   },
+   {
+    "clip": "c1",
+    "ss": 0.2,
+    "dur": 3.5
+   }
+  ]
+ },
+ {
+  "name": "AD2-seguridad-sin-chispas",
+  "hook": [
+   [
+    "CORTAR TEJA NO DEBERÍA VERSE ASÍ",
+    84,
+    "white",
+    "#E53935"
+   ]
+  ],
+  "hook_dur": 2.6,
+  "end_headline": "Corta en frío, sin disco abrasivo",
+  "segments": [
+   {
+    "clip": "c7",
+    "ss": 0.0,
+    "dur": 1.5,
+    "speed": 0.75
+   },
+   {
+    "clip": "c7",
+    "ss": 19.2,
+    "dur": 1.1
+   },
+   {
+    "clip": "c7",
+    "ss": 20.3,
+    "dur": 2.2,
+    "cap": "La pulidora bota chispas y hace ruido"
+   },
+   {
+    "clip": "c7",
+    "ss": 0.4,
+    "dur": 1.6,
+    "speed": 0.75,
+    "cap": "y deja el borde quemado"
+   },
+   {
+    "clip": "c8",
+    "ss": 0.0,
+    "dur": 2.6,
+    "cap": "El cabezal corta en frío"
+   },
+   {
+    "clip": "c8",
+    "ss": 17.0,
+    "dur": 2.0,
+    "cap": "Sin disco abrasivo"
+   },
+   {
+    "clip": "c3",
+    "ss": 5.0,
+    "dur": 2.0,
+    "cap": "Sin rebaba filosa"
+   },
+   {
+    "clip": "c3",
+    "ss": 8.0,
+    "dur": 1.6,
+    "cap": "Sin rebaba filosa"
+   },
+   {
+    "clip": "c1",
+    "ss": 0.2,
+    "dur": 3.5
+   }
+  ]
+ },
+ {
+  "name": "AD3-maestro-mas-trabajos",
+  "hook": [
+   [
+    "MAESTRO,",
+    92,
+    "black",
+    "#FFD400"
+   ],
+   [
+    "¿cuánto tiempo pierde cortando lámina?",
+    64,
+    "white",
+    "#E53935"
+   ]
+  ],
+  "end_headline": "Termine antes y coja otro trabajo",
+  "segments": [
+   {
+    "clip": "c3",
+    "ss": 0.0,
+    "dur": 1.6
+   },
+   {
+    "clip": "c11",
+    "ss": 16.0,
+    "dur": 1.5
+   },
+   {
+    "clip": "c11",
+    "ss": 17.5,
+    "dur": 2.0,
+    "cap": "Con tijera: lento y la mano se cansa"
+   },
+   {
+    "clip": "c8",
+    "ss": 11.0,
+    "dur": 2.4,
+    "cap": "Con el cabezal: lo guía y ya"
+   },
+   {
+    "clip": "c6",
+    "ss": 12.0,
+    "dur": 2.4,
+    "cap": "Teja, canal y perfil en el mismo día"
+   },
+   {
+    "clip": "c8",
+    "ss": 3.0,
+    "dur": 1.8,
+    "cap": "Termine antes y coja otro trabajo"
+   },
+   {
+    "clip": "c9",
+    "ss": 6.0,
+    "dur": 2.2,
+    "cap": "Termine antes y coja otro trabajo"
+   },
+   {
+    "clip": "c10",
+    "ss": 15.0,
+    "dur": 1.8,
+    "cap": "Cabe en la caja de herramientas"
+   },
+   {
+    "clip": "c1",
+    "ss": 0.2,
+    "dur": 3.5
+   }
+  ]
+ },
+ {
+  "name": "AD4-cualquiera-lo-usa",
+  "hook": [
+   [
+    "¿NUNCA HAS CORTADO LÁMINA?",
+    80,
+    "black",
+    "#FFD400"
+   ],
+   [
+    "Mira lo fácil que es",
+    60,
+    "white",
+    "#E53935"
+   ]
+  ],
+  "end_headline": "No necesitas ser maestro",
+  "segments": [
+   {
+    "clip": "c6",
+    "ss": 9.0,
+    "dur": 3.0
+   },
+   {
+    "clip": "c1",
+    "ss": 6.0,
+    "dur": 2.6,
+    "cap": "Se pone en el taladro en un minuto"
+   },
+   {
+    "clip": "c9",
+    "ss": 5.0,
+    "dur": 2.6,
+    "cap": "Lo guías y ya"
+   },
+   {
+    "clip": "c6",
+    "ss": 0.0,
+    "dur": 2.0,
+    "cap": "Para el techo de la casa"
+   },
+   {
+    "clip": "c7",
+    "ss": 6.0,
+    "dur": 2.0,
+    "cap": "El gallinero"
+   },
+   {
+    "clip": "c8",
+    "ss": 19.0,
+    "dur": 2.0,
+    "cap": "Canales y la marquesina"
+   },
+   {
+    "clip": "c1",
+    "ss": 0.2,
+    "dur": 3.5
+   }
+  ]
+ },
+ {
+  "name": "AD5-regalo-diciembre",
+  "hook": [
+   [
+    "¿NO SABES QUÉ REGALARLE?",
+    82,
+    "black",
+    "#FFD400"
+   ],
+   [
+    "Si tiene taladro, esto le va a encantar",
+    58,
+    "white",
+    "#E53935"
+   ]
+  ],
+  "end_headline": "Uno para papá y otro para el suegro",
+  "segments": [
+   {
+    "clip": "c10",
+    "ss": 2.0,
+    "dur": 1.6
+   },
+   {
+    "clip": "c10",
+    "ss": 4.5,
+    "dur": 1.4
+   },
+   {
+    "clip": "c10",
+    "ss": 8.0,
+    "dur": 2.0,
+    "cap": "Convierte su taladro en cortadora de lámina"
+   },
+   {
+    "clip": "c1",
+    "ss": 3.0,
+    "dur": 2.0,
+    "cap": "Convierte su taladro en cortadora de lámina"
+   },
+   {
+    "clip": "c6",
+    "ss": 5.0,
+    "dur": 2.2,
+    "cap": "Le llega a la casa y pagas al recibir"
+   },
+   {
+    "clip": "c8",
+    "ss": 11.0,
+    "dur": 2.0,
+    "cap": "Lleva 2 por $169.900"
+   },
+   {
+    "clip": "c6",
+    "ss": 18.0,
+    "dur": 2.0,
+    "cap": "Uno para papá y otro para el suegro"
+   },
+   {
+    "clip": "c1",
+    "ss": 0.2,
+    "dur": 3.5
+   }
+  ]
+ },
+ {
+  "name": "AD6-precision-cortes-curvos",
+  "hook": [
+   [
+    "CON TIJERA ESTO ES IMPOSIBLE",
+    84,
+    "white",
+    "#E53935"
+   ]
+  ],
+  "end_headline": "Rectos, curvos y a la medida exacta",
+  "segments": [
+   {
+    "clip": "c8",
+    "ss": 11.0,
+    "dur": 1.5
+   },
+   {
+    "clip": "c6",
+    "ss": 9.3,
+    "dur": 1.7
+   },
+   {
+    "clip": "c8",
+    "ss": 21.0,
+    "dur": 2.6,
+    "cap": "Rectos, curvos, a la medida exacta"
+   },
+   {
+    "clip": "c9",
+    "ss": 11.0,
+    "dur": 2.6,
+    "cap": "Sin deformar la lámina"
+   },
+   {
+    "clip": "c7",
+    "ss": 17.0,
+    "dur": 2.0,
+    "cap": "Lámina hasta calibre 20 (1 mm) y teja de zinc"
+   },
+   {
+    "clip": "c6",
+    "ss": 12.0,
+    "dur": 2.2,
+    "cap": "Perfiles de drywall"
+   },
+   {
+    "clip": "c3",
+    "ss": 6.0,
+    "dur": 1.2,
+    "cap": "Ductos y canales"
+   },
+   {
+    "clip": "c1",
+    "ss": 0.2,
+    "dur": 3.5
+   }
+  ]
+ },
+ {
+  "name": "AD7-tijera-todavia",
+  "hook": [
+   [
+    "¿TODAVÍA CORTAS LÁMINA CON TIJERA?",
+    80,
+    "black",
+    "#FFD400"
+   ]
+  ],
+  "end_headline": "Tu taladro ya puede cortar lámina",
+  "segments": [
+   {
+    "clip": "c3",
+    "ss": 0.0,
+    "dur": 1.5
+   },
+   {
+    "clip": "c11",
+    "ss": 16.0,
+    "dur": 1.6
+   },
+   {
+    "clip": "c3",
+    "ss": 1.0,
+    "dur": 1.6,
+    "cap": "Mano cansada y borde torcido"
+   },
+   {
+    "clip": "c1",
+    "ss": 6.0,
+    "dur": 2.4,
+    "cap": "Ponle este cabezal a tu taladro"
+   },
+   {
+    "clip": "c9",
+    "ss": 6.0,
+    "dur": 2.4,
+    "cap": "Lo guías y corta parejo"
+   },
+   {
+    "clip": "c8",
+    "ss": 0.0,
+    "dur": 2.0,
+    "cap": "Teja, canales y lámina hasta 1 mm"
+   },
+   {
+    "clip": "c3",
+    "ss": 8.0,
+    "dur": 1.8,
+    "cap": "Corte limpio, sin esfuerzo"
+   },
+   {
+    "clip": "c1",
+    "ss": 0.2,
+    "dur": 3.5
+   }
+  ]
+ }
+]
