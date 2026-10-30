@@ -20,53 +20,53 @@
    {
     "clip": "c7",
     "ss": 4.0,
-    "dur": 1.6
+    "dur": 1.95
    },
    {
     "clip": "c7",
     "ss": 13.0,
-    "dur": 1.5
+    "dur": 1.83
    },
    {
     "clip": "c7",
     "ss": 14.6,
-    "dur": 1.6,
+    "dur": 1.56,
     "cap": "Cambia la teja dañada tú mismo"
    },
    {
     "clip": "c7",
     "ss": 16.4,
-    "dur": 1.4,
+    "dur": 1.36,
     "cap": "Cambia la teja dañada tú mismo"
    },
    {
     "clip": "c1",
     "ss": 6.0,
-    "dur": 2.4,
+    "dur": 2.27,
     "cap": "Pones el cabezal en tu taladro"
    },
    {
     "clip": "c6",
     "ss": 15.0,
-    "dur": 2.2,
+    "dur": 1.87,
     "cap": "Cortas la teja a la medida en segundos"
    },
    {
     "clip": "c7",
     "ss": 17.2,
-    "dur": 1.8,
+    "dur": 1.53,
     "cap": "Cortas la teja a la medida en segundos"
    },
    {
     "clip": "c8",
     "ss": 17.0,
-    "dur": 2.0,
+    "dur": 1.64,
     "cap": "Y listo, antes del próximo aguacero"
    },
    {
     "clip": "c7",
     "ss": 4.6,
-    "dur": 1.5,
+    "dur": 1.23,
     "cap": "Y listo, antes del próximo aguacero"
    },
    {
@@ -74,7 +74,9 @@
     "ss": 0.2,
     "dur": 3.5
    }
-  ]
+  ],
+  "hook_dur": 3.78,
+  "audio": "voz/AD1-lluvias-gotera.wav"
  },
  {
   "name": "AD2-seguridad-sin-chispas",
@@ -86,55 +88,55 @@
     "#E53935"
    ]
   ],
-  "hook_dur": 2.6,
+  "hook_dur": 2.74,
   "end_headline": "Corta en frío, sin disco abrasivo",
   "segments": [
    {
     "clip": "c7",
     "ss": 0.0,
-    "dur": 1.5,
+    "dur": 1.58,
     "speed": 0.75
    },
    {
     "clip": "c7",
     "ss": 19.2,
-    "dur": 1.1
+    "dur": 1.16
    },
    {
     "clip": "c7",
     "ss": 20.3,
-    "dur": 2.2,
+    "dur": 3.12,
     "cap": "La pulidora bota chispas y hace ruido"
    },
    {
     "clip": "c7",
     "ss": 0.4,
-    "dur": 1.6,
+    "dur": 1.92,
     "speed": 0.75,
     "cap": "y deja el borde quemado"
    },
    {
     "clip": "c8",
     "ss": 0.0,
-    "dur": 2.6,
+    "dur": 2.36,
     "cap": "El cabezal corta en frío"
    },
    {
     "clip": "c8",
     "ss": 17.0,
-    "dur": 2.0,
+    "dur": 1.65,
     "cap": "Sin disco abrasivo"
    },
    {
     "clip": "c3",
     "ss": 5.0,
-    "dur": 2.0,
+    "dur": 1.01,
     "cap": "Sin rebaba filosa"
    },
    {
     "clip": "c3",
     "ss": 8.0,
-    "dur": 1.6,
+    "dur": 0.81,
     "cap": "Sin rebaba filosa"
    },
    {
@@ -142,7 +144,8 @@
     "ss": 0.2,
     "dur": 3.5
    }
-  ]
+  ],
+  "audio": "voz/AD2-seguridad-sin-chispas.wav"
  },
  {
   "name": "AD3-maestro-mas-trabajos",
@@ -165,47 +168,47 @@
    {
     "clip": "c3",
     "ss": 0.0,
-    "dur": 1.6
+    "dur": 2.04
    },
    {
     "clip": "c11",
     "ss": 16.0,
-    "dur": 1.5
+    "dur": 1.91
    },
    {
     "clip": "c11",
     "ss": 17.5,
-    "dur": 2.0,
+    "dur": 3.03,
     "cap": "Con tijera: lento y la mano se cansa"
    },
    {
     "clip": "c8",
     "ss": 11.0,
-    "dur": 2.4,
+    "dur": 2.86,
     "cap": "Con el cabezal: lo guía y ya"
    },
    {
     "clip": "c6",
     "ss": 12.0,
-    "dur": 2.4,
+    "dur": 3.22,
     "cap": "Teja, canal y perfil en el mismo día"
    },
    {
     "clip": "c8",
     "ss": 3.0,
-    "dur": 1.8,
+    "dur": 1.35,
     "cap": "Termine antes y coja otro trabajo"
    },
    {
     "clip": "c9",
     "ss": 6.0,
-    "dur": 2.2,
+    "dur": 1.65,
     "cap": "Termine antes y coja otro trabajo"
    },
    {
     "clip": "c10",
     "ss": 15.0,
-    "dur": 1.8,
+    "dur": 2.17,
     "cap": "Cabe en la caja de herramientas"
    },
    {
@@ -213,7 +216,9 @@
     "ss": 0.2,
     "dur": 3.5
    }
-  ]
+  ],
+  "hook_dur": 3.95,
+  "audio": "voz/AD3-maestro-mas-trabajos.wav"
  },
  {
   "name": "AD4-cualquiera-lo-usa",
@@ -236,36 +241,36 @@
    {
     "clip": "c6",
     "ss": 9.0,
-    "dur": 3.0
+    "dur": 3.8
    },
    {
     "clip": "c1",
     "ss": 6.0,
-    "dur": 2.6,
+    "dur": 2.77,
     "cap": "Se pone en el taladro en un minuto"
    },
    {
     "clip": "c9",
     "ss": 5.0,
-    "dur": 2.6,
+    "dur": 1.78,
     "cap": "Lo guías y ya"
    },
    {
     "clip": "c6",
     "ss": 0.0,
-    "dur": 2.0,
+    "dur": 1.78,
     "cap": "Para el techo de la casa"
    },
    {
     "clip": "c7",
     "ss": 6.0,
-    "dur": 2.0,
+    "dur": 1.26,
     "cap": "El gallinero"
    },
    {
     "clip": "c8",
     "ss": 19.0,
-    "dur": 2.0,
+    "dur": 2.11,
     "cap": "Canales y la marquesina"
    },
    {
@@ -273,7 +278,9 @@
     "ss": 0.2,
     "dur": 3.5
    }
-  ]
+  ],
+  "hook_dur": 3.8,
+  "audio": "voz/AD4-cualquiera-lo-usa.wav"
  },
  {
   "name": "AD5-regalo-diciembre",
@@ -296,41 +303,41 @@
    {
     "clip": "c10",
     "ss": 2.0,
-    "dur": 1.6
+    "dur": 2.52
    },
    {
     "clip": "c10",
     "ss": 4.5,
-    "dur": 1.4
+    "dur": 2.21
    },
    {
     "clip": "c10",
     "ss": 8.0,
-    "dur": 2.0,
+    "dur": 1.69,
     "cap": "Convierte su taladro en cortadora de lámina"
    },
    {
     "clip": "c1",
     "ss": 3.0,
-    "dur": 2.0,
+    "dur": 1.69,
     "cap": "Convierte su taladro en cortadora de lámina"
    },
    {
     "clip": "c6",
     "ss": 5.0,
-    "dur": 2.2,
+    "dur": 2.66,
     "cap": "Le llega a la casa y pagas al recibir"
    },
    {
     "clip": "c8",
     "ss": 11.0,
-    "dur": 2.0,
+    "dur": 3.62,
     "cap": "Lleva 2 por $169.900"
    },
    {
     "clip": "c6",
     "ss": 18.0,
-    "dur": 2.0,
+    "dur": 2.66,
     "cap": "Uno para papá y otro para el suegro"
    },
    {
@@ -338,7 +345,9 @@
     "ss": 0.2,
     "dur": 3.5
    }
-  ]
+  ],
+  "hook_dur": 4.73,
+  "audio": "voz/AD5-regalo-diciembre.wav"
  },
  {
   "name": "AD6-precision-cortes-curvos",
@@ -355,41 +364,41 @@
    {
     "clip": "c8",
     "ss": 11.0,
-    "dur": 1.5
+    "dur": 1.38
    },
    {
     "clip": "c6",
     "ss": 9.3,
-    "dur": 1.7
+    "dur": 1.57
    },
    {
     "clip": "c8",
     "ss": 21.0,
-    "dur": 2.6,
+    "dur": 3.34,
     "cap": "Rectos, curvos, a la medida exacta"
    },
    {
     "clip": "c9",
     "ss": 11.0,
-    "dur": 2.6,
+    "dur": 1.91,
     "cap": "Sin deformar la lámina"
    },
    {
     "clip": "c7",
     "ss": 17.0,
-    "dur": 2.0,
+    "dur": 4.46,
     "cap": "Lámina hasta calibre 20 (1 mm) y teja de zinc"
    },
    {
     "clip": "c6",
     "ss": 12.0,
-    "dur": 2.2,
+    "dur": 1.72,
     "cap": "Perfiles de drywall"
    },
    {
     "clip": "c3",
     "ss": 6.0,
-    "dur": 1.2,
+    "dur": 1.64,
     "cap": "Ductos y canales"
    },
    {
@@ -397,7 +406,9 @@
     "ss": 0.2,
     "dur": 3.5
    }
-  ]
+  ],
+  "hook_dur": 2.95,
+  "audio": "voz/AD6-precision-cortes-curvos.wav"
  },
  {
   "name": "AD7-tijera-todavia",
@@ -414,41 +425,41 @@
    {
     "clip": "c3",
     "ss": 0.0,
-    "dur": 1.5
+    "dur": 1.32
    },
    {
     "clip": "c11",
     "ss": 16.0,
-    "dur": 1.6
+    "dur": 1.41
    },
    {
     "clip": "c3",
     "ss": 1.0,
-    "dur": 1.6,
+    "dur": 2.74,
     "cap": "Mano cansada y borde torcido"
    },
    {
     "clip": "c1",
     "ss": 6.0,
-    "dur": 2.4,
+    "dur": 2.24,
     "cap": "Ponle este cabezal a tu taladro"
    },
    {
     "clip": "c9",
     "ss": 6.0,
-    "dur": 2.4,
+    "dur": 2.27,
     "cap": "Lo guías y corta parejo"
    },
    {
     "clip": "c8",
     "ss": 0.0,
-    "dur": 2.0,
+    "dur": 3.56,
     "cap": "Teja, canales y lámina hasta 1 mm"
    },
    {
     "clip": "c3",
-    "ss": 8.0,
-    "dur": 1.8,
+    "ss": 7.5,
+    "dur": 2.53,
     "cap": "Corte limpio, sin esfuerzo"
    },
    {
@@ -456,6 +467,8 @@
     "ss": 0.2,
     "dur": 3.5
    }
-  ]
+  ],
+  "hook_dur": 2.73,
+  "audio": "voz/AD7-tijera-todavia.wav"
  }
 ]

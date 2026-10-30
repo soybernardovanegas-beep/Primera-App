@@ -1,4 +1,5 @@
-"""Locución con Gemini TTS: una frase por gancho y por subtítulo, tramos ajustados a la voz.
+"""Locución con Gemini TTS: una petición por video (gancho + subtítulos, una línea cada uno),
+cortada por las pausas entre líneas; los tramos se ajustan a la duración de cada frase.
 
 python3 -I voz.py            # genera/usa caché en voz/cache, reescribe ads.json y voz/<name>.wav
 Luego: python3 -I build.py
@@ -11,10 +12,11 @@ VOZ = os.path.join(S, "voz")
 CACHE = os.path.join(VOZ, "cache")
 os.makedirs(CACHE, exist_ok=True)
 
-MODEL = "gemini-2.5-flash-preview-tts"
+MODEL = "gemini-3.1-flash-tts-preview"
 VOICE = "Puck"
 STYLE = ("Lee esto en español de Colombia, con acento colombiano natural, como un vendedor "
-         "entusiasta y cercano en un anuncio de redes sociales, ritmo ágil y claro: ")
+         "entusiasta y cercano en un anuncio de redes sociales, ritmo ágil y claro. "
+         "Haz una pausa corta entre cada línea:\n\n")
 RATE = 24000
 GAP = 0.3       # silencio después de cada frase
 LEAD = 0.15     # silencio antes de la primera frase
@@ -51,38 +53,116 @@ def dur(p):
     return float(r.stdout.strip())
 
 
-def tts(text):
-    key = hashlib.sha1(f"{MODEL}|{VOICE}|{STYLE}|{text}".encode()).hexdigest()[:16]
-    wav = os.path.join(CACHE, key + ".wav")
-    if os.path.exists(wav):
-        return wav
+def request(text):
     body = json.dumps({
         "contents": [{"parts": [{"text": STYLE + text}]}],
         "generationConfig": {"responseModalities": ["AUDIO"],
                              "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": VOICE}}}},
     }).encode()
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
-    for attempt in range(6):
+    for attempt in range(12):
         req = urllib.request.Request(url, body, {"Content-Type": "application/json",
                                                  "x-goog-api-key": os.environ.get("GEMINI_API_KEY", "x")})
+        wait = min(5 * 2 ** attempt, 120)
         try:
-            d = json.load(urllib.request.urlopen(req, timeout=120))
-            pcm = base64.b64decode(d["candidates"][0]["content"]["parts"][0]["inlineData"]["data"])
-            break
-        except (urllib.error.HTTPError, urllib.error.URLError, KeyError, TimeoutError) as e:
-            print("  reintento", attempt + 1, e)
-            time.sleep(5 * 2 ** attempt)
-    else:
-        sys.exit(f"TTS falló: {text}")
-    tmp = wav + ".pcm"
-    open(tmp, "wb").write(pcm)
-    # quita silencios al inicio y al final
-    trim = ("silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.03,"
-            "areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.05,areverse")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "s16le", "-ar", str(RATE), "-ac", "1", "-i", tmp,
-                    "-af", trim, wav], check=True)
-    os.remove(tmp)
-    return wav
+            d = json.load(urllib.request.urlopen(req, timeout=180))
+            return base64.b64decode(d["candidates"][0]["content"]["parts"][0]["inlineData"]["data"])
+        except urllib.error.HTTPError as e:
+            msg = e.read().decode(errors="replace")
+            m = re.search(r'"retryDelay":\s*"(\d+)', msg)  # 429: Gemini dice cuánto esperar
+            if m:
+                wait = int(m.group(1)) + 2
+            if wait > 600:
+                sys.exit(f"Cuota de {MODEL} agotada: {msg[:400]}")
+            print("  reintento", attempt + 1, e.code, f"espera {wait}s", flush=True)
+        except (urllib.error.URLError, KeyError, TimeoutError) as e:
+            print("  reintento", attempt + 1, e, flush=True)
+        time.sleep(wait)
+    sys.exit("TTS falló")
+
+
+def silences(wav):
+    r = subprocess.run(["ffmpeg", "-i", wav, "-af", "silencedetect=n=-40dB:d=0.12", "-f", "null", "-"],
+                       capture_output=True, text=True)
+    st = [float(x) for x in re.findall(r"silence_start: ([\d.]+)", r.stderr)]
+    en = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", r.stderr)]
+    return list(zip(st, en))
+
+
+def pick_cuts(sil, chars, total):
+    """Elige len(chars)-1 pausas cuyo reparto se parezca más a la longitud de cada línea."""
+    import math
+    n, k = len(chars), len(sil)
+    if k < n - 1:
+        return None
+    rate = total / sum(chars)
+    mids = [(a + b) / 2 for a, b in sil]
+
+    def cost(i, t0, t1):  # línea i entre t0 y t1
+        return math.log(max(t1 - t0, 0.05) / (chars[i] * rate)) ** 2
+
+    INF = float("inf")
+    # best[j][c] = costo de las líneas 0..j terminando en el corte c
+    best = [[INF] * k for _ in range(n - 1)]
+    back = [[-1] * k for _ in range(n - 1)]
+    for c in range(k):
+        best[0][c] = cost(0, 0, mids[c]) - 0.5 * (sil[c][1] - sil[c][0])
+    for j in range(1, n - 1):
+        for c in range(j, k):
+            for p in range(j - 1, c):
+                v = best[j - 1][p] + cost(j, mids[p], mids[c]) - 0.5 * (sil[c][1] - sil[c][0])
+                if v < best[j][c]:
+                    best[j][c], back[j][c] = v, p
+    if n == 1:
+        return []
+    c = min(range(k), key=lambda c: best[n - 2][c] + cost(n - 1, mids[c], total))
+    out = []
+    for j in range(n - 2, -1, -1):
+        out.append(sil[c])
+        c = back[j][c]
+    return out[::-1]
+
+
+def tts_lines(lines):
+    """Una petición con todas las líneas; devuelve un wav recortado por línea."""
+    key = hashlib.sha1(f"{MODEL}|{VOICE}|{STYLE}|{lines}".encode()).hexdigest()[:16]
+    outs = [os.path.join(CACHE, f"{key}_{i}.wav") for i in range(len(lines))]
+    if all(os.path.exists(p) for p in outs):
+        return outs
+    for attempt in range(3):
+        full = os.path.join(CACHE, f"{key}_full{attempt}.wav")
+        if not os.path.exists(full):
+            tmp = full + ".pcm"
+            open(tmp, "wb").write(request("\n".join(lines)))
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "s16le", "-ar", str(RATE), "-ac", "1", "-i", tmp,
+                            full], check=True)
+            os.remove(tmp)
+        total = dur(full)
+        allsil = silences(full)
+        sil = [(a, b) for a, b in allsil if a > 0.05 and b < total - 0.05]  # internas
+        cuts = pick_cuts(sil, [len(l) for l in lines], total)
+        if cuts is not None:
+            edges = [0.0] + [(a + b) / 2 for a, b in cuts] + [total]
+            spans, ok = [], True
+            for i, line in enumerate(lines):
+                t0, t1 = edges[i], edges[i + 1]
+                for x, y in allsil:  # quita la media pausa que queda en cada borde
+                    if x <= t0 + 0.02 < y:
+                        t0 = y - 0.03
+                    if x < t1 - 0.02 <= y:
+                        t1 = x + 0.05
+                spans.append((t0, t1))
+                cps = len(line) / (t1 - t0)
+                if not 8 <= cps <= 24:  # el corte no cuadra con el texto
+                    print(f"  corte dudoso ({cps:.1f} c/s): {line}", flush=True)
+                    ok = False
+            if ok:
+                for (t0, t1), p in zip(spans, outs):
+                    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", full, "-ss", f"{t0:.3f}",
+                                    "-to", f"{t1:.3f}", p], check=True)
+                return outs
+        print("  no se pudo cortar por pausas, se pide de nuevo", flush=True)
+    sys.exit("No se pudo cortar la locución en frases")
 
 
 def groups(ad):
@@ -133,15 +213,16 @@ def main():
             continue
         print(ad["name"])
         t, parts = 0.0, []
-        for gi, (text, idx, is_hook) in enumerate(groups(ad)):
-            wav = tts(spoken(text))
+        gs = groups(ad)
+        wavs = tts_lines([spoken(text) for text, *_ in gs])
+        for gi, ((text, idx, is_hook), wav) in enumerate(zip(gs, wavs)):
             d = dur(wav)
             start = LEAD if gi == 0 else 0.0
             span = fit(ad, idx, start + d + GAP)
             if is_hook:
                 ad["hook_dur"] = round(span, 2)
             parts.append((wav, t + start))
-            print(f"  {t:5.2f}s +{d:4.2f}s  {spoken(text)}")
+            print(f"  {t:5.2f}s +{d:4.2f}s  {spoken(text)}", flush=True)
             t += span
         total = t + ad["segments"][-1]["dur"]
         inputs, fc = [], ""

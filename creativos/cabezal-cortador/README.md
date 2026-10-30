@@ -14,11 +14,20 @@ python3 -I build.py       # genera out/AD1..AD7 (sin voz)
 - `build.py`: recorta/normaliza los clips, pone gancho, subtítulos, columna de oferta y cierre.
   Si un video tiene `"audio": "<ruta.wav>"` en `ads.json`, lo usa como pista de audio.
 
-## Voz (pendiente)
+## Voz
 
-Locución con Gemini TTS (secreto `x-goog-api-key` para `generativelanguage.googleapis.com`
-configurado en el entorno). Texto de la voz = gancho + subtítulos de cada video, en español de Colombia.
-Ajustar la duración de cada tramo a la voz o la voz a los tramos, y volver a correr `build.py`.
+```bash
+python3 -I voz.py         # Gemini TTS -> voz/<name>.wav, ajusta tramos y pone "audio" en ads.json
+python3 -I build.py
+```
+
+- Modelo `gemini-3.1-flash-tts-preview`, voz `Puck`, español de Colombia, tono vendedor. Sin música.
+- Texto = gancho + subtítulos de cada video (cifras dichas en palabras: "ciento sesenta y nueve mil novecientos").
+- Una sola petición por video (la cuota gratis de TTS es de pocas peticiones al día); la locución se corta
+  por las pausas entre líneas y cada tramo dura lo que su frase + 0,3 s. El cierre (3,5 s) va sin voz.
+- `gemini-2.5-flash-preview-tts` permite 10 peticiones/día en el plan gratis; `gemini-3.8-flash-tts`
+  lee en voz alta las instrucciones de estilo, por eso no se usa.
+- Las locuciones finales están versionadas en `voz/` para no tener que regenerarlas.
 
 ## Notas de cumplimiento
 
