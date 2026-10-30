@@ -24,7 +24,9 @@ python3 -I build.py
 - Modelo `gemini-3.1-flash-tts-preview`, voz `Puck`, español de Colombia, tono vendedor. Sin música.
 - Texto = gancho + subtítulos de cada video (cifras dichas en palabras: "ciento sesenta y nueve mil novecientos").
 - Una sola petición por video (la cuota gratis de TTS es de pocas peticiones al día); la locución se corta
-  por las pausas entre líneas y cada tramo dura lo que su frase + 0,3 s. El cierre (3,5 s) va sin voz.
+  por las pausas entre líneas y cada tramo dura lo que su frase + 0,3 s.
+- Cierre: la oferta hablada (`CLOSE` en `voz.py`) se pide una sola vez, se acelera ×1,12 y se pega
+  sobre la tarjeta final, que se alarga a lo que dure (≈10,8 s). Videos de 24 a 29 s.
 - `gemini-2.5-flash-preview-tts` permite 10 peticiones/día en el plan gratis; `gemini-3.8-flash-tts`
   lee en voz alta las instrucciones de estilo, por eso no se usa.
 - Las locuciones finales están versionadas en `voz/` para no tener que regenerarlas.

@@ -22,6 +22,7 @@ GAP = 0.3       # silencio después de cada frase
 LEAD = 0.15     # silencio antes de la primera frase
 MIN_SEG = 0.8   # duración mínima de un tramo de video
 END_MIN = 3.5   # duración mínima de la tarjeta de cierre
+CLOSE_TEMPO = 1.12  # el cierre es largo (cifras en palabras): se acelera un poco para quedar < 30 s
 # oferta hablada sobre la tarjeta de cierre (igual en los 7 videos)
 CLOSE = ("Llévalo por solo $99.900 pesos, o dos por $169.900. "
          "Envío a toda Colombia y pagas al recibir. ¡Escríbenos por WhatsApp!")
@@ -171,6 +172,13 @@ def tts_lines(lines):
     sys.exit("No se pudo cortar la locución en frases")
 
 
+def faster(wav, tempo):
+    out = wav[:-4] + f"_x{tempo}.wav"
+    if not os.path.exists(out):
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", wav, "-af", f"atempo={tempo}", out], check=True)
+    return out
+
+
 def groups(ad):
     """Agrupa tramos: gancho (tramos iniciales sin subtítulo), cada subtítulo, y cierre (último tramo).
     Devuelve (texto, índices de tramo, tipo) con tipo "hook", "cap" o "close"."""
@@ -223,7 +231,7 @@ def main():
         t, parts = 0.0, []
         gs = groups(ad)
         # el cierre es igual en todos: se pide una sola vez y se pega al final
-        wavs = tts_lines([spoken(text) for text, _, kind in gs if kind != "close"]) + tts_lines([spoken(CLOSE)])
+        wavs = tts_lines([spoken(text) for text, _, kind in gs if kind != "close"]) + [faster(tts_lines([spoken(CLOSE)])[0], CLOSE_TEMPO)]
         for gi, ((text, idx, kind), wav) in enumerate(zip(gs, wavs)):
             d = dur(wav)
             start = LEAD if gi == 0 else 0.0
