@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Confirma Pedidos</title>
+<meta name="description" content="Pega los datos del pedido, guarda el contacto y confirma por WhatsApp Business.">
+<meta name="theme-color" content="#128c7e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+  :root {
+    --bg: #f4f6f5;
+    --surface: #ffffff;
+    --surface-2: #eef2f1;
+    --text: #15201d;
+    --muted: #5d6b67;
+    --border: #d7dfdc;
+    --accent: #128c7e;
+    --accent-ink: #ffffff;
+    --accent-soft: #dff3ef;
+    --wa: #25d366;
+    --warn-bg: #fff4d6;
+    --warn-ink: #7a5600;
+    --ok-bg: #e2f6e8;
+    --ok-ink: #1d6b35;
+    --danger: #b3261e;
+    --radius: 14px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1514;
+      --surface: #182120;
+      --surface-2: #1f2a28;
+      --text: #e7eeec;
+      --muted: #9aaba6;
+      --border: #2c3a37;
+      --accent: #2bb3a1;
+      --accent-ink: #06201c;
+      --accent-soft: #163a35;
+      --warn-bg: #3a2f10;
+      --warn-ink: #f3d27a;
+      --ok-bg: #143220;
+      --ok-ink: #8fe0a8;
+      --danger: #ff8a80;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1514; --surface: #182120; --surface-2: #1f2a28; --text: #e7eeec;
+    --muted: #9aaba6; --border: #2c3a37; --accent: #2bb3a1; --accent-ink: #06201c;
+    --accent-soft: #163a35; --warn-bg: #3a2f10; --warn-ink: #f3d27a;
+    --ok-bg: #143220; --ok-ink: #8fe0a8; --danger: #ff8a80; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding: 0 16px calc(32px + env(safe-area-inset-bottom));
+  }
+  main { max-width: 640px; margin: 0 auto; }
+  header { padding: 20px 0 8px; }
+  h1 { font-size: 1.4rem; margin: 0; }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: .95rem; }
+  h2 { font-size: 1.05rem; margin: 24px 0 10px; }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+  textarea, input, select {
+    width: 100%;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  textarea { min-height: 150px; resize: vertical; }
+  textarea:focus, input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  label { display: block; font-size: .8rem; color: var(--muted); margin-bottom: 4px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .row > * { flex: 1 1 auto; }
+  button, .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    min-height: 44px; padding: 10px 14px;
+    font: inherit; font-weight: 600; text-decoration: none;
+    border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text); cursor: pointer;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+  .btn-wa { background: var(--wa); color: #062b14; border-color: transparent; }
+  .btn-ghost { background: transparent; }
+  button:disabled { opacity: .5; cursor: default; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid .full { grid-column: 1 / -1; }
+  @media (max-width: 420px) { .grid { grid-template-columns: 1fr; } }
+  .card { margin-top: 14px; }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .card-head strong { font-size: 1.05rem; }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge { font-size: .75rem; padding: 3px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); white-space: nowrap; }
+  .badge.ok { background: var(--ok-bg); color: var(--ok-ink); }
+  .warn { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 8px 10px; font-size: .9rem; margin-bottom: 10px; }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); font-size: .9rem; }
+  pre.msg {
+    white-space: pre-wrap; word-break: break-word;
+    background: var(--accent-soft); border-radius: 10px; padding: 10px 12px;
+    font: .92rem/1.45 system-ui, sans-serif; margin: 8px 0 0;
+  }
+  .hist { list-style: none; padding: 0; margin: 0; }
+  .hist li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .hist li:last-child { border-bottom: 0; }
+  .hist .who { min-width: 0; }
+  .hist .who div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hist small { color: var(--muted); }
+  .muted { color: var(--muted); font-size: .9rem; }
+  .toast {
+    position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+    background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 999px;
+    font-size: .9rem; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100% - 32px);
+  }
+  .toast.show { opacity: 1; }
+  .check { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+  .check input { width: auto; }
+  .check label { margin: 0; font-size: .95rem; color: var(--text); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Confirma Pedidos</h1>
+    <p>Pega los datos, guarda el contacto y confirma por WhatsApp.</p>
+  </header>
+
+  <section class="panel" aria-label="Pegar pedido">
+    <label for="input">Datos del pedido (puedes pegar varios a la vez)</label>
+    <textarea id="input" placeholder="Nombre: Juan Pérez&#10;Teléfono: 300 123 4567&#10;Dirección: Calle 10 # 5-20&#10;Barrio: Centro&#10;Ciudad: Medellín&#10;Departamento: Antioquia&#10;Cantidad: 2"></textarea>
+    <div class="row">
+      <button id="btnPaste" type="button">📋 Pegar</button>
+      <button id="btnParse" type="button" class="btn-primary">Procesar</button>
+      <button id="btnClear" type="button" class="btn-ghost">Limpiar</button>
+    </div>
+  </section>
+
+  <div id="results"></div>
+  <div id="bulk" class="row" hidden>
+    <button id="btnAllVcf" type="button">👥 Guardar todos los contactos (.vcf)</button>
+  </div>
+
+  <h2>Pedidos recientes</h2>
+  <section class="panel">
+    <ul id="history" class="hist"></ul>
+    <p id="historyEmpty" class="muted">Todavía no hay pedidos.</p>
+    <div class="row"><button id="btnClearHist" type="button" class="btn-ghost">Borrar historial</button></div>
+  </section>
+
+  <h2>Ajustes</h2>
+  <section class="panel">
+    <div class="grid">
+      <div><label for="cfgBusiness">Negocio</label><input id="cfgBusiness"></div>
+      <div><label for="cfgProduct">Producto</label><input id="cfgProduct"></div>
+      <div><label for="cfgP1">Precio x1</label><input id="cfgP1" inputmode="numeric"></div>
+      <div><label for="cfgP2">Precio x2</label><input id="cfgP2" inputmode="numeric"></div>
+      <div><label for="cfgP3">Precio x3</label><input id="cfgP3" inputmode="numeric"></div>
+      <div><label for="cfgContact">Nombre del contacto</label><input id="cfgContact"></div>
+      <div class="full">
+        <label for="cfgTemplate">Mensaje de confirmación</label>
+        <textarea id="cfgTemplate" style="min-height:220px"></textarea>
+        <p class="muted">Variables: {nombre} {nombre_completo} {telefono} {direccion} {barrio} {ciudad} {departamento} {cantidad} {producto} {total} {negocio} {notas}</p>
+      </div>
+    </div>
+    <div class="check">
+      <input type="checkbox" id="cfgBusinessApp">
+      <label for="cfgBusinessApp">Abrir directo en WhatsApp Business (Android)</label>
+    </div>
+    <div class="row">
+      <button id="btnSaveCfg" type="button" class="btn-primary">Guardar ajustes</button>
+      <button id="btnResetCfg" type="button" class="btn-ghost">Restaurar</button>
+    </div>
+  </section>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+/* ---------- Ajustes ---------- */
+const DEFAULTS = {
+  business: 'XOLVETA',
+  product: 'Cabezal cortador de lámina para taladro',
+  p1: 94900, p2: 149900, p3: 199900,
+  contact: '{nombre_completo} (XOLVETA)',
+  businessApp: true,
+  template:
+`Hola {nombre} 👋, te escribimos de {negocio} para confirmar tu pedido:
+
+🛠️ {cantidad} x {producto}
+💰 Total a pagar al recibir: ${'$'}{total}
+📍 {direccion}, {barrio}, {ciudad} - {departamento}
+
+¿Nos confirmas que los datos están correctos para despacharlo? Responde *SÍ* ✅
+
+Envío gratis · Pagas al recibir · Garantía 10 días.`
+};
+
+const store = {
+  get(key, fallback) {
+    try { const v = localStorage.getItem(key); return v == null ? fallback : JSON.parse(v); }
+    catch (e) { return fallback; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; }
+  }
+};
+
+let cfg = Object.assign({}, DEFAULTS, store.get('cp.cfg', {}));
+let orders = store.get('cp.history', []);
+let current = [];
+
+/* ---------- Utilidades ---------- */
+const $ = (id) => document.getElementById(id);
+const strip = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const money = (n) => (Number(n) || 0).toLocaleString('es-CO');
+const toNumber = (s) => Number(String(s || '').replace(/[^\d]/g, '')) || 0;
+const titleCase = (s) => s.toLowerCase().replace(/(^|[\s'-])(\p{L})/gu, (m, a, b) => a + b.toUpperCase()).trim();
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function toast(text) {
+  const t = $('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ---------- Teléfonos ---------- */
+const PHONE_RE = /(?:\+?\s?57[\s.\-]?)?\(?3\d{2}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}/;
+
+function normalizePhone(raw) {
+  let d = String(raw || '').replace(/\D/g, '');
+  if (d.startsWith('0057')) d = d.slice(2);
+  if (d.length === 10 && d.startsWith('3')) d = '57' + d;          // celular colombiano
+  else if (d.length === 10 && d.startsWith('60')) d = '57' + d;    // fijo nuevo formato
+  const valid = /^573\d{9}$/.test(d);
+  return { digits: d, valid };
+}
+
+function prettyPhone(d) {
+  const m = /^57(\d{3})(\d{3})(\d{4})$/.exec(d);
+  return m ? `+57 ${m[1]} ${m[2]} ${m[3]}` : (d ? '+' + d : '');
+}
+
+/* ---------- Lector de pedidos ---------- */
+const KEYS = [
+  ['nombre', /^(nombres?( completo| y apellidos?)?|cliente|nombre del cliente|name|full name|destinatario|first name)$/],
+  ['apellido', /^(apellidos?|last name)$/],
+  ['telefono', /^(telefono|tel|tel\.?|cel|celular|movil|whatsapp|wa|phone|numero|contacto|telefono celular|numero de telefono)$/],
+  ['direccion', /^(direccion|dir|address|domicilio|direccion de entrega|direccion completa|address1)$/],
+  ['barrio', /^(barrio|sector|conjunto|address2|complemento)$/],
+  ['ciudad', /^(ciudad|municipio|city|localidad|ciudad de destino)$/],
+  ['departamento', /^(departamento|depto|dpto|estado|province|region|provincia)$/],
+  ['cantidad', /^(cantidad|cant|unidades|qty|quantity)$/],
+  ['producto', /^(producto|productos|articulo|item|product)$/],
+  ['total', /^(total|valor|precio|monto|total a pagar|valor a cobrar|recaudo|valor total|total pedido)$/],
+  ['notas', /^(notas?|observacion(es)?|comentarios?|indicaciones|referencias?|punto de referencia)$/]
+];
+
+function matchKey(label) {
+  const k = strip(label).toLowerCase().replace(/[^a-z0-9 .]/g, ' ').replace(/\s+/g, ' ').trim();
+  for (const [name, re] of KEYS) if (re.test(k)) return name;
+  return null;
+}
+
+const LABEL_LINE = /^\s*[^\p{L}\d]*([\p{L} .]{2,30}?)\s*[:=]\s*(.*)$/u;
+const ADDRESS_HINT = /\b(calle|cll|cl|carrera|cra|kra|kr|cr|avenida|av|diagonal|dg|transversal|tv|trans|manzana|mz|vereda|km|autopista|circular)\b|#/i;
+
+function parseBlock(lines) {
+  const records = [];
+  let rec = { loose: [] };
+  const push = () => { if (Object.keys(rec).length > 1 || rec.loose.length) records.push(rec); rec = { loose: [] }; };
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (/^[-=_*~•.]{3,}$/.test(line)) { push(); continue; }
+    const m = LABEL_LINE.exec(line);
+    const key = m ? matchKey(m[1]) : null;
+    if (key) {
+      const value = m[2].trim();
+      if ((key === 'nombre' || key === 'telefono') && rec[key]) push();
+      if (value) rec[key] = rec[key] ? rec[key] + ' ' + value : value;
+      else rec._pending = key;
+    } else if (rec._pending) {
+      rec[rec._pending] = line; delete rec._pending;
+    } else {
+      rec.loose.push(line);
+    }
+  }
+  push();
+  return records;
+}
+
+function finish(rec) {
+  delete rec._pending;
+  const loose = rec.loose || [];
+  const allText = [rec.telefono || '', ...loose].join('\n');
+
+  if (!rec.telefono) {
+    const m = PHONE_RE.exec(allText);
+    if (m) rec.telefono = m[0];
+  }
+  const rest = loose.filter((l) => !(rec.telefono && l.includes(rec.telefono)));
+  if (!rec.nombre) {
+    const cand = rest.find((l) => /\p{L}{2,}/u.test(l) && !/\d/.test(l) && l.split(/\s+/).length <= 5 && !ADDRESS_HINT.test(l));
+    if (cand) rec.nombre = cand;
+  }
+  if (!rec.direccion) {
+    const cand = rest.find((l) => ADDRESS_HINT.test(l));
+    if (cand) rec.direccion = cand.replace(PHONE_RE, '').trim();
+  }
+  if (!rec.ciudad) {
+    // Una línea corta sin números después de la dirección suele ser la ciudad.
+    const after = rest.slice(rest.findIndex((l) => ADDRESS_HINT.test(l)) + 1);
+    const cand = after.find((l) => /^[\p{L} .,-]{3,40}$/u.test(l) && l !== rec.nombre);
+    if (cand && rest.some((l) => ADDRESS_HINT.test(l))) {
+      const [c, d] = cand.split(/\s*[,-]\s*/);
+      rec.ciudad = c;
+      if (d && !rec.departamento) rec.departamento = d;
+    }
+  }
+  if (!rec.cantidad) {
+    const m = /\b(\d{1,2})\s*(x\b|unid|und|cabezal|productos?)/i.exec(rest.join(' ') + ' ' + (rec.producto || ''))
+           || /\bx\s*(\d{1,2})\b/i.exec(rest.join(' ') + ' ' + (rec.producto || ''));
+    if (m) rec.cantidad = m[1];
+  }
+
+  const phone = normalizePhone(rec.telefono);
+  const nombreCompleto = titleCase([rec.nombre, rec.apellido].filter(Boolean).join(' '));
+  const cantidad = Math.max(1, parseInt(rec.cantidad, 10) || 1);
+  const priceFor = (q) => q === 1 ? cfg.p1 : q === 2 ? cfg.p2 : q === 3 ? cfg.p3 : cfg.p1 * q;
+
+  return {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+    nombre: nombreCompleto,
+    telefono: phone.digits,
+    direccion: (rec.direccion || '').trim(),
+    barrio: titleCase(rec.barrio || ''),
+    ciudad: titleCase(rec.ciudad || ''),
+    departamento: titleCase(rec.departamento || ''),
+    cantidad,
+    producto: rec.producto || cfg.product,
+    total: toNumber(rec.total) || priceFor(cantidad),
+    notas: rec.notas || '',
+    contactSaved: false,
+    messageSent: false,
+    createdAt: new Date().toISOString()
+  };
+}
+
+function parseOrders(text) {
+  const lines = text.replace(/\r/g, '').split('\n');
+  let records = parseBlock(lines);
+
+  // Si no hubo etiquetas y vienen varios pedidos separados por líneas en blanco, separar por bloques.
+  if (records.length <= 1) {
+    const blocks = text.replace(/\r/g, '').split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
+    const withPhone = blocks.filter((b) => PHONE_RE.test(b));
+    if (blocks.length > 1 && withPhone.length === blocks.length) {
+      records = blocks.flatMap((b) => parseBlock(b.split('\n')));
+    }
+  }
+  return records.map(finish).filter((o) => o.telefono || o.nombre);
+}
+
+/* ---------- Mensaje y enlaces ---------- */
+function fill(tpl, o) {
+  const first = (o.nombre || '').split(' ')[0] || '';
+  const map = {
+    nombre: first, nombre_completo: o.nombre, telefono: prettyPhone(o.telefono),
+    direccion: o.direccion, barrio: o.barrio, ciudad: o.ciudad, departamento: o.departamento,
+    cantidad: o.cantidad, producto: o.producto, total: money(o.total), negocio: cfg.business, notas: o.notas
+  };
+  return tpl.replace(/\{(\w+)\}/g, (m, k) => (k in map ? String(map[k] ?? '') : m))
+    // limpiar separadores sobrantes cuando faltan datos (", ," o " - " al final)
+    .replace(/(,[ \t]*)+(?=,|[ \t]-[ \t]|\n|$)/g, '')
+    .replace(/📍[ \t]*,[ \t]*/g, '📍 ')
+    .replace(/[ \t]-[ \t]*(?=\n|$)/g, '')
+    .replace(/[ \t]+\n/g, '\n');
+}
+
+function waLink(o) {
+  const text = encodeURIComponent(fill(cfg.template, o));
+  const web = `https://wa.me/${o.telefono}?text=${text}`;
+  if (cfg.businessApp && /Android/i.test(navigator.userAgent)) {
+    return `intent://send/?phone=${o.telefono}&text=${text}#Intent;scheme=whatsapp;package=com.whatsapp.w4b;S.browser_fallback_url=${encodeURIComponent(web)};end`;
+  }
+  return web;
+}
+
+/* ---------- vCard ---------- */
+const vEsc = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/([,;])/g, '\\$1');
+
+function contactName(o) {
+  return cfg.contact.replace('{nombre_completo}', o.nombre || 'Cliente').replace('{nombre}', (o.nombre || 'Cliente').split(' ')[0]);
+}
+
+function vcard(o) {
+  const full = contactName(o);
+  const parts = (o.nombre || 'Cliente').split(' ');
+  const given = parts.slice(0, Math.ceil(parts.length / 2)).join(' ');
+  const family = parts.slice(Math.ceil(parts.length / 2)).join(' ');
+  const suffix = full.replace(o.nombre || 'Cliente', '').trim();
+  const fecha = new Date(o.createdAt).toLocaleDateString('es-CO');
+  return [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    `N:${vEsc(family)};${vEsc(given)};;;${vEsc(suffix)}`,
+    `FN:${vEsc(full)}`,
+    `TEL;TYPE=CELL:+${o.telefono}`,
+    `ADR;TYPE=HOME:;;${vEsc([o.direccion, o.barrio].filter(Boolean).join(', '))};${vEsc(o.ciudad)};${vEsc(o.departamento)};;Colombia`,
+    `ORG:${vEsc('Cliente ' + cfg.business)}`,
+    `NOTE:${vEsc(`Pedido ${fecha}: ${o.cantidad} x ${o.producto} - $${money(o.total)}${o.notas ? ' - ' + o.notas : ''}`)}`,
+    'END:VCARD'
+  ].join('\r\n');
+}
+
+function downloadVcf(content, filename) {
+  const blob = new Blob([content + '\r\n'], { type: 'text/vcard;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+const fileSafe = (s) => strip(s || 'cliente').replace(/[^\w]+/g, '_').replace(/^_|_$/g, '') || 'cliente';
+
+/* ---------- Historial ---------- */
+function upsertHistory(o) {
+  const i = orders.findIndex((h) => h.id === o.id);
+  if (i >= 0) orders[i] = Object.assign({}, o); else orders.unshift(Object.assign({}, o));
+  orders = orders.slice(0, 100);
+  store.set('cp.history', orders);
+  renderHistory();
+}
+
+function renderHistory() {
+  const ul = $('history');
+  ul.innerHTML = orders.map((h) => `
+    <li>
+      <div class="who">
+        <div><strong>${esc(h.nombre || 'Sin nombre')}</strong></div>
+        <small>${esc(prettyPhone(h.telefono))} · ${esc(h.ciudad || '—')} · ${new Date(h.createdAt).toLocaleDateString('es-CO')}</small>
+      </div>
+      <div class="badges">
+        <span class="badge ${h.contactSaved ? 'ok' : ''}">${h.contactSaved ? '✓ Contacto' : 'Contacto'}</span>
+        <span class="badge ${h.messageSent ? 'ok' : ''}">${h.messageSent ? '✓ WhatsApp' : 'WhatsApp'}</span>
+        <button type="button" class="btn-ghost" data-open="${esc(h.id)}" aria-label="Abrir pedido">Abrir</button>
+      </div>
+    </li>`).join('');
+  $('historyEmpty').hidden = orders.length > 0;
+  $('btnClearHist').hidden = orders.length === 0;
+}
+
+/* ---------- Tarjetas de pedido ---------- */
+const FIELDS = [
+  ['nombre', 'Nombre', 'full'], ['telefono', 'Teléfono (con 57)', ''], ['cantidad', 'Cantidad', ''],
+  ['direccion', 'Dirección', 'full'], ['barrio', 'Barrio', ''], ['ciudad', 'Ciudad', ''],
+  ['departamento', 'Departamento', ''], ['total', 'Total a cobrar', ''], ['producto', 'Producto', 'full'], ['notas', 'Notas', 'full']
+];
+
+function renderResults() {
+  const box = $('results');
+  box.innerHTML = current.map((o, idx) => {
+    const ph = normalizePhone(o.telefono);
+    const warns = [];
+    if (!ph.valid) warns.push('Revisa el teléfono: no parece un celular colombiano (debe quedar 57 + 10 dígitos que empiezan por 3).');
+    if (!o.nombre) warns.push('No encontré el nombre.');
+    if (!o.direccion) warns.push('No encontré la dirección.');
+    return `
+    <article class="panel card" data-idx="${idx}">
+      <div class="card-head">
+        <strong>${esc(o.nombre || 'Pedido ' + (idx + 1))}</strong>
+        <div class="badges">
+          <span class="badge ${o.contactSaved ? 'ok' : ''}">${o.contactSaved ? '✓ Contacto' : 'Contacto'}</span>
+          <span class="badge ${o.messageSent ? 'ok' : ''}">${o.messageSent ? '✓ WhatsApp' : 'WhatsApp'}</span>
+        </div>
+      </div>
+      ${warns.map((w) => `<div class="warn">${esc(w)}</div>`).join('')}
+      <div class="grid">
+        ${FIELDS.map(([k, label, cls]) => `
+          <div class="${cls}">
+            <label for="f-${idx}-${k}">${label}</label>
+            <input id="f-${idx}-${k}" data-field="${k}" value="${esc(k === 'total' ? money(o[k]) : o[k])}"
+              ${k === 'telefono' || k === 'cantidad' || k === 'total' ? 'inputmode="numeric"' : ''}>
+          </div>`).join('')}
+      </div>
+      <details>
+        <summary>Ver mensaje</summary>
+        <pre class="msg">${esc(fill(cfg.template, o))}</pre>
+      </details>
+      <div class="row">
+        <button type="button" data-act="vcf">👤 1. Guardar contacto</button>
+        <a class="btn btn-wa" data-act="wa" href="${esc(waLink(o))}" ${ph.valid ? '' : 'aria-disabled="true"'}>💬 2. Confirmar por WhatsApp</a>
+      </div>
+    </article>`;
+  }).join('');
+  $('bulk').hidden = current.length < 2;
+}
+
+function refreshCard(idx) {
+  const card = document.querySelector(`[data-idx="${idx}"]`);
+  if (!card) return;
+  const o = current[idx];
+  card.querySelector('pre.msg').textContent = fill(cfg.template, o);
+  card.querySelector('[data-act="wa"]').href = waLink(o);
+  card.querySelector('.card-head strong').textContent = o.nombre || 'Pedido ' + (idx + 1);
+}
+
+$('results').addEventListener('input', (e) => {
+  const input = e.target.closest('[data-field]');
+  if (!input) return;
+  const idx = Number(input.closest('[data-idx]').dataset.idx);
+  const k = input.dataset.field;
+  const o = current[idx];
+  if (k === 'telefono') o.telefono = normalizePhone(input.value).digits;
+  else if (k === 'total') o.total = toNumber(input.value);
+  else if (k === 'cantidad') {
+    o.cantidad = Math.max(1, parseInt(input.value, 10) || 1);
+    const p = o.cantidad === 1 ? cfg.p1 : o.cantidad === 2 ? cfg.p2 : o.cantidad === 3 ? cfg.p3 : cfg.p1 * o.cantidad;
+    o.total = p;
+    const t = document.getElementById(`f-${idx}-total`); if (t) t.value = money(p);
+  } else o[k] = input.value;
+  refreshCard(idx);
+  if (o.contactSaved || o.messageSent) upsertHistory(o);
+});
+
+$('results').addEventListener('change', (e) => {
+  if (e.target.dataset.field === 'telefono') renderResults();
+});
+
+$('results').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-act]');
+  if (!btn) return;
+  const idx = Number(btn.closest('[data-idx]').dataset.idx);
+  const o = current[idx];
+  if (btn.dataset.act === 'vcf') {
+    if (!o.telefono) { toast('Falta el teléfono'); return; }
+    downloadVcf(vcard(o), fileSafe(o.nombre) + '.vcf');
+    o.contactSaved = true;
+    upsertHistory(o);
+    renderResults();
+    toast('Abre el archivo descargado y toca Guardar');
+  } else if (btn.dataset.act === 'wa') {
+    if (!normalizePhone(o.telefono).valid) { e.preventDefault(); toast('Corrige el teléfono primero'); return; }
+    o.messageSent = true;
+    upsertHistory(o);
+    setTimeout(renderResults, 300);
+  }
+});
+
+$('btnAllVcf').addEventListener('click', () => {
+  const ok = current.filter((o) => o.telefono);
+  if (!ok.length) return;
+  downloadVcf(ok.map(vcard).join('\r\n'), `contactos_${new Date().toISOString().slice(0, 10)}.vcf`);
+  ok.forEach((o) => { o.contactSaved = true; upsertHistory(o); });
+  renderResults();
+  toast(`${ok.length} contactos en un solo archivo`);
+});
+
+/* ---------- Entrada ---------- */
+$('btnParse').addEventListener('click', () => {
+  const text = $('input').value.trim();
+  if (!text) { toast('Pega primero los datos del pedido'); return; }
+  current = parseOrders(text);
+  if (!current.length) { toast('No encontré nombre ni teléfono'); return; }
+  renderResults();
+  toast(current.length === 1 ? 'Pedido listo' : `${current.length} pedidos listos`);
+  $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+$('btnPaste').addEventListener('click', async () => {
+  try {
+    const t = await navigator.clipboard.readText();
+    if (t) { $('input').value = t; $('btnParse').click(); }
+    else toast('El portapapeles está vacío');
+  } catch (e) { toast('Mantén presionado el cuadro y elige Pegar'); $('input').focus(); }
+});
+
+$('btnClear').addEventListener('click', () => { $('input').value = ''; current = []; renderResults(); $('input').focus(); });
+
+$('history').addEventListener('click', (e) => {
+  const id = e.target.closest('[data-open]')?.dataset.open;
+  if (!id) return;
+  const h = orders.find((x) => x.id === id);
+  if (!h) return;
+  current = [Object.assign({}, h)];
+  renderResults();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+$('btnClearHist').addEventListener('click', () => {
+  if (!confirm('¿Borrar todo el historial de pedidos de este celular?')) return;
+  orders = []; store.set('cp.history', orders); renderHistory();
+});
+
+/* ---------- Ajustes UI ---------- */
+function loadCfgUI() {
+  $('cfgBusiness').value = cfg.business;
+  $('cfgProduct').value = cfg.product;
+  $('cfgP1').value = money(cfg.p1);
+  $('cfgP2').value = money(cfg.p2);
+  $('cfgP3').value = money(cfg.p3);
+  $('cfgContact').value = cfg.contact;
+  $('cfgTemplate').value = cfg.template;
+  $('cfgBusinessApp').checked = !!cfg.businessApp;
+}
+
+$('btnSaveCfg').addEventListener('click', () => {
+  cfg = {
+    business: $('cfgBusiness').value.trim() || DEFAULTS.business,
+    product: $('cfgProduct').value.trim() || DEFAULTS.product,
+    p1: toNumber($('cfgP1').value) || DEFAULTS.p1,
+    p2: toNumber($('cfgP2').value) || DEFAULTS.p2,
+    p3: toNumber($('cfgP3').value) || DEFAULTS.p3,
+    contact: $('cfgContact').value.trim() || DEFAULTS.contact,
+    template: $('cfgTemplate').value || DEFAULTS.template,
+    businessApp: $('cfgBusinessApp').checked
+  };
+  store.set('cp.cfg', cfg);
+  loadCfgUI();
+  renderResults();
+  toast('Ajustes guardados');
+});
+
+$('btnResetCfg').addEventListener('click', () => {
+  cfg = Object.assign({}, DEFAULTS);
+  store.set('cp.cfg', {});
+  loadCfgUI();
+  renderResults();
+  toast('Ajustes restaurados');
+});
+
+loadCfgUI();
+renderHistory();
+
+// Compartir texto a la app (Android: "Compartir" → Confirma Pedidos)
+const shared = new URLSearchParams(location.search);
+const sharedText = [shared.get('title'), shared.get('text'), shared.get('url')].filter(Boolean).join('\n');
+if (sharedText) { $('input').value = sharedText; $('btnParse').click(); window.history.replaceState(null, '', location.pathname); }
+
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// Exponer para pruebas
+window.__cp = { parseOrders, fill, vcard, normalizePhone };
+</script>
+</body>
+</html>
