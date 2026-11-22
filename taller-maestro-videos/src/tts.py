@@ -1,5 +1,6 @@
 import sys,json,base64,wave,time,urllib.request,urllib.error
-URL="https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash-tts:generateContent"
+import os
+URL="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent"%os.environ.get("TTS_MODEL","gemini-3.8-flash-tts")
 STYLE="Di esto en español latinoamericano neutro, con acento colombiano suave, voz masculina cercana y segura, de maestro de obra a maestro de obra, ritmo ágil pero claro: "
 def tts(text,out,voice="Orus"):
     body={"contents":[{"parts":[{"text":STYLE+text}]}],"generationConfig":{"responseModalities":["AUDIO"],"speechConfig":{"voiceConfig":{"prebuiltVoiceConfig":{"voiceName":voice}}}}}
