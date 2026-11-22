@@ -7,15 +7,24 @@ os.makedirs('tmp/phr', exist_ok=True)
 def base(t): return 'tmp/phr/' + hashlib.md5(t.encode()).hexdigest()[:12]
 def dur(p): return float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0',p]))
 
-def split(full, n):
-    """devuelve n tramos (t0,t1) cortando en los n-1 silencios más largos"""
-    err = subprocess.run(['ffmpeg','-i',full,'-af','silencedetect=noise=-38dB:d=0.12','-f','null','-'],capture_output=True,text=True).stderr
+def split(full, n, texts=None):
+    """n tramos: corta en el silencio más cercano a la posición proporcional (por caracteres) de cada frase"""
+    err = subprocess.run(['ffmpeg','-i',full,'-af','silencedetect=noise=-38dB:d=0.1','-f','null','-'],capture_output=True,text=True).stderr
     st = [float(x) for x in re.findall(r'silence_start: ([\d.]+)', err)]
     en = [float(x) for x in re.findall(r'silence_end: ([\d.]+)', err)]
     total = dur(full)
-    gaps = [(e - s, (s + e) / 2) for s, e in zip(st, en) if s > 0.3 and e < total - 0.1]
-    cuts = sorted(m for _, m in sorted(gaps, reverse=True)[:n - 1])
-    if len(cuts) < n - 1: raise RuntimeError('no se encontraron %d silencios' % (n - 1))
+    mids = [((s + e) / 2, e - s) for s, e in zip(st, en) if s > 0.3 and e < total - 0.1]
+    if len(mids) < n - 1: raise RuntimeError('no se encontraron %d silencios' % (n - 1))
+    w = [len(t) for t in texts] if texts else [1] * n
+    # el audio tiene pausas iniciales/finales: se reparte sobre el tramo hablado
+    t0 = min(st[0], 0) if False else 0.0
+    cuts, acc, last = [], 0, 0.0
+    for i in range(n - 1):
+        acc += w[i]; exp = total * acc / sum(w)
+        cand = [m for m in mids if m[0] > last + 0.4]
+        if not cand: raise RuntimeError('faltan silencios')
+        near = [m for m in cand if abs(m[0] - exp) <= 1.0] or [min(cand, key=lambda m: abs(m[0] - exp))]
+        c = max(near, key=lambda m: m[1])[0]; cuts.append(c); last = c
     b = [0] + cuts + [total]
     return list(zip(b, b[1:]))
 
@@ -25,7 +34,7 @@ def run(vid):
     full = 'tmp/%s_full.wav' % vid
     if not os.path.exists(full):
         if not tts('\n\n'.join(s['voz'] for s in sc), full): return False
-    for s, (a, b) in zip(sc, split(full, len(sc))):
+    for s, (a, b) in zip(sc, split(full, len(sc), [x['voz'] for x in sc])):
         subprocess.run(['ffmpeg','-v','error','-y','-ss','%.3f'%a,'-to','%.3f'%b,'-i',full,base(s['voz'])+'.wav'],check=True)
     return True
 
