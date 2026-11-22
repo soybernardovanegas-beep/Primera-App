@@ -9,6 +9,7 @@ W, H, FPS = 1080, 1920, 30
 FONT = "/usr/share/fonts/opentype/inter/Inter-Black.otf"
 YELLOW = (255, 212, 0); ORANGE = (255, 106, 0); BLACK = (0, 0, 0); WHITE = (255, 255, 255); DARK = (17, 17, 17)
 LEAD, TAIL, MIN_TOTAL, MIN_CARD = 0.4, 0.4, 19.0, 4.0
+BED = os.environ.get('BED') == '1'  # sonido de herramienta sintético: desactivado (no gustó)
 
 SRC = {
     "dk1632": "entrada/cabezal/dropkiller-1632.mp4", "dk1539": "entrada/cabezal/dropkiller-1539.mp4",
@@ -222,9 +223,12 @@ def build(vid):
     os.makedirs("voz", exist_ok=True)
     run(["ffmpeg", "-v", "error", "-y", "-i", raw, "-af", "loudnorm=I=-16:TP=-1.5:LRA=7,aresample=48000", "voz/%s.wav" % vid])
     # mezcla: voz al frente, sonido de herramienta con ducking
-    fc = (bed_filter(v["sonido"], total + 1) + ";[bed]volume=0.55[b];"
-          "[0:a]asplit=2[v1][v2];[b][v2]sidechaincompress=threshold=0.015:ratio=10:attack=15:release=350:makeup=1[bd];"
-          "[v1][bd]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-16:TP=-1.5:LRA=9[a]")
+    if BED:
+        fc = (bed_filter(v["sonido"], total + 1) + ";[bed]volume=0.55[b];"
+              "[0:a]asplit=2[v1][v2];[b][v2]sidechaincompress=threshold=0.015:ratio=10:attack=15:release=350:makeup=1[bd];"
+              "[v1][bd]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-16:TP=-1.5:LRA=9[a]")
+    else:
+        fc = "[0:a]loudnorm=I=-16:TP=-1.5:LRA=9[a]"
     run(["ffmpeg", "-v", "error", "-y", "-i", "voz/%s.wav" % vid, "-filter_complex", fc, "-map", "[a]", "-t", "%.3f" % total, "-ar", "48000", "tmp/%s_audio.wav" % vid])
     # overlays por intervalos
     cuts = sorted(set([0, total] + [e[0] for e in events] + [e[1] for e in events]))
