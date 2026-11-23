@@ -15,7 +15,11 @@ SRC = {
     "dk1632": "entrada/cabezal/dropkiller-1632.mp4", "dk1539": "entrada/cabezal/dropkiller-1539.mp4",
     "ddgq": "entrada/cabezal/igexport-DdGQ.mp4", "ddob": "entrada/cabezal/igexport-Ddob.mp4",
     "fffcccp": "entrada/cabezal/fffcccp.mp4", "lab": "entrada/afilador/laboratorio_ferretero.mp4",
-    "digify": "entrada/afilador/Digify_Mx.mp4", "ia_sin": "tmp/ia_sin_loop.mp4", "ia_afi": "entrada/afilador/IA_broca_afilada.mp4",
+    "digify": "entrada/afilador/Digify_Mx.mp4", "ia_sin": "tmp/ia_sin_loop.mp4", "ia_afi": "entrada/nuevo/tomas/Drill_making_hole_in_steel.mp4",
+    "rain": "entrada/nuevo/tomas/Rain_dripping_through_cracked_roof.mp4", "grinder": "entrada/nuevo/tomas/Angle_grinder_cutting_metal_sheet.mp4",
+    "dull": "entrada/nuevo/tomas/Hand_picking_dull_drill_bit.mp4", "skid": "entrada/nuevo/tomas/Drill_skidding_on_steel_plate.mp4",
+    "macro": "entrada/nuevo/tomas/Twist_drill_bit_sharpening.mp4", "compare": "entrada/nuevo/tomas/Drilling_comparison_on_steel_plate.mp4",
+    "table": "entrada/nuevo/tomas/Cordless_drill_on_workshop_table.mp4",
 }
 # recorte extra (fracciones superior, inferior) para quitar textos pequeños de la fuente
 EXTRA = {"fffcccp": (0.06, 0.08), "digify": (0.0, 0.24), "dk1632": (0.07, 0.0)}
@@ -38,7 +42,9 @@ def prep_ia_loop():
          "-map", "[o]", "-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv420p", "tmp/ia_sin_loop.mp4"])
 
 _crop = {}
+NO_LB = {"ia_sin","ia_afi","rain","grinder","dull","skid","macro","compare","table"}
 def letterbox(key):
+    if key in NO_LB: return None
     if key in _crop: return _crop[key]
     p = SRC[key]
     err = subprocess.run(["ffmpeg", "-ss", "3", "-t", "4", "-i", p, "-vf", "cropdetect=24:2:0", "-f", "null", "-"], capture_output=True, text=True).stderr

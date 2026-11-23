@@ -15,14 +15,14 @@ AFILADOR = dict(
 
 VIDEOS = {
  "C1": dict(file="C1-gotera", **CABEZAL, ofertas=["2 POR $139.900", "3 POR $179.900"], scenes=[
-    dict(voz="Llueve y la teja de zinc gotea.", txt="¿LLUEVE Y GOTEA?", clip=("dk1632", 3.5)),
+    dict(voz="Llueve y la teja de zinc gotea.", txt="¿LLUEVE Y GOTEA?", clip=("rain", 0.0)),
     dict(voz="Con este cabezal, tu taladro corta la teja de reemplazo.", txt="TU TALADRO CORTA ZINC", clip=("ddgq", 2.5)),
     dict(voz="Recto o en curva, sin deformar la lámina.", txt="SIN DEFORMAR LA LÁMINA", clip=("dk1539", 6.5)),
     dict(voz="No incluye taladro. No corta acero inoxidable.", txt="NO INCLUYE TALADRO · NO CORTA INOXIDABLE", clip=("ddgq", 20.5)),
     dict(voz="Ochenta y nueve mil novecientos pesos. Envío gratis, pagas al recibir. Escríbenos.", card=True),
  ]),
  "C2": dict(file="C2-sin-chispas", **CABEZAL, ofertas=["2 POR $139.900", "3 POR $179.900"], scenes=[
-    dict(voz="¿Todavía cortas lámina con pulidora?", txt="¿LÁMINA CON PULIDORA?", clip=("ddgq", 0.3)),
+    dict(voz="¿Todavía cortas lámina con pulidora?", txt="¿LÁMINA CON PULIDORA?", clip=("grinder", 0.0)),
     dict(voz="Con el cabezal no hay chispas ni disco que se rompa.", txt="CERO CHISPAS", clip=("fffcccp", 0.5)),
     dict(voz="El corte queda limpio y la lámina no se quema.", txt="CORTE LIMPIO, SIN QUEMAR", clip=("fffcccp", 11.0)),
     dict(voz="Zinc, drywall, hojalata, aluminio.", txt="ZINC · DRYWALL · LÁMINA HASTA 1 MM", clip=("dk1632", 13.0)),
@@ -42,8 +42,8 @@ VIDEOS = {
     dict(voz="Ochenta y nueve mil novecientos pesos, o dos por ciento treinta y nueve mil novecientos. Envío gratis y pagas al recibir.", card=True),
  ]),
  "A1": dict(file="A1-botando-plata", **AFILADOR, ofertas=["2 POR $119.900"], scenes=[
-    dict(voz="¿Cuántas brocas has botado este año?", txt="¿CUÁNTAS BROCAS HAS BOTADO?", clip=("lab", 0.5)),
-    dict(voz="El problema no es la broca: se le gastó el filo.", txt="SE GASTÓ EL FILO", clip=("ia_sin", 0)),
+    dict(voz="¿Cuántas brocas has botado este año?", txt="¿CUÁNTAS BROCAS HAS BOTADO?", clip=("dull", 0.0)),
+    dict(voz="El problema no es la broca: se le gastó el filo.", txt="SE GASTÓ EL FILO", clip=("skid", 0.0)),
     dict(voz="Pones el afilador en tu taladro y le devuelves el filo.", txt="AFÍLALA CON TU TALADRO", clip=("digify", 1.3)),
     dict(voz="Y vuelve a perforar.", txt="VUELVE A PERFORAR", clip=("ia_afi", 0)),
     dict(voz="Sesenta y nueve mil novecientos pesos. Envío gratis, pagas al recibir.", card=True),
@@ -51,17 +51,17 @@ VIDEOS = {
  "A2": dict(file="A2-filo-en-segundos", **AFILADOR, ofertas=["2 POR $119.900"], scenes=[
     dict(voz="Esta broca estaba sin filo hace un minuto.", txt="ESTA BROCA ESTABA SIN FILO", clip=("ia_afi", 0)),
     dict(voz="Así la afilé, con el mismo taladro.", txt="ASÍ LA AFILÉ", clip=("lab", 3.0)),
-    dict(voz="La punta queda lista otra vez.", txt="ANTES / DESPUÉS", kind="seq", clip=("ia_sin", 0), clip2=("ia_afi", 2.0)),
+    dict(voz="La punta queda lista otra vez.", txt="ANTES / DESPUÉS", clip=("macro", 0.0)),
     dict(voz="Sesenta y nueve mil novecientos pesos. Pagas al recibir. Escríbenos.", card=True),
  ]),
  "A3": dict(file="A3-sin-filo-vs-afilada", **AFILADOR, ofertas=["2 POR $119.900"], scenes=[
-    dict(voz="Misma lámina, mismo taladro…", txt="SIN FILO VS AFILADA", kind="split", clip=("ia_sin", 0), clip2=("ia_afi", 0)),
-    dict(voz="Una quema y patina, la otra entra de una.", txt="¿CUÁL PREFIERES?", kind="split", clip=("ia_sin", 0), clip2=("ia_afi", 2.0)),
+    dict(voz="Misma lámina, mismo taladro…", txt="SIN FILO VS AFILADA", clip=("compare", 0.0)),
+    dict(voz="Una quema y patina, la otra entra de una.", txt="¿CUÁL PREFIERES?", clip=("compare", 3.5)),
     dict(voz="La diferencia es un minuto con el afilador.", txt="LA DIFERENCIA: 1 MINUTO", clip=("digify", 6.0)),
     dict(voz="Sesenta y nueve mil novecientos pesos. Envío gratis, pagas al recibir.", card=True),
  ]),
  "A4": dict(file="A4-regalo", **AFILADOR, ofertas=["2 POR $119.900"], scenes=[
-    dict(voz="Para el que siempre anda con el taladro…", txt="PARA EL QUE SIEMPRE ANDA CON TALADRO", clip=("ia_afi", 0)),
+    dict(voz="Para el que siempre anda con el taladro…", txt="PARA EL QUE SIEMPRE ANDA CON TALADRO", clip=("table", 0.0)),
     dict(voz="Un regalo útil: le devuelve el filo a sus brocas.", txt="ESTE ES SU REGALO", clip=("lab", 3.0)),
     dict(voz="Lleva dos: uno para él y uno para regalar.", txt="LLEVA 2: UNO PARA REGALAR", clip=("lab", 0.3)),
     dict(voz="Sesenta y nueve mil novecientos pesos, o dos por ciento diecinueve mil novecientos. Pagas al recibir.", card=True),

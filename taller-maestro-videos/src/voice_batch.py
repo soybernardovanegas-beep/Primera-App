@@ -24,9 +24,11 @@ def split(full, n, texts=None):
         cand = [m for m in mids if m[0] > last + 0.4]
         if not cand: raise RuntimeError('faltan silencios')
         near = [m for m in cand if abs(m[0] - exp) <= 1.0] or [min(cand, key=lambda m: abs(m[0] - exp))]
-        c = max(near, key=lambda m: m[1])[0]; cuts.append(c); last = c
+        c = max(near, key=lambda m: m[1] - 0.3 * abs(m[0] - exp))[0]; cuts.append(c); last = c
     b = [0] + cuts + [total]
     return list(zip(b, b[1:]))
+
+CUTS = {'C3': [3.0, 7.3, 10.2, 13.7], 'A2': [2.5, 5.2, 7.2]}  # cortes revisados a mano sobre las voces nuevas
 
 def run(vid):
     sc = VIDEOS[vid]['scenes']
@@ -34,7 +36,10 @@ def run(vid):
     full = 'tmp/%s_full.wav' % vid
     if not os.path.exists(full):
         if not tts('\n\n'.join(s['voz'] for s in sc), full): return False
-    for s, (a, b) in zip(sc, split(full, len(sc), [x['voz'] for x in sc])):
+    if vid in CUTS:
+        bs = [0] + CUTS[vid] + [dur(full)]; spans = list(zip(bs, bs[1:]))
+    else: spans = split(full, len(sc), [x['voz'] for x in sc])
+    for s, (a, b) in zip(sc, spans):
         subprocess.run(['ffmpeg','-v','error','-y','-ss','%.3f'%a,'-to','%.3f'%b,'-i',full,base(s['voz'])+'.wav'],check=True)
     return True
 
