@@ -128,7 +128,7 @@ Sesenta y nueve mil novecientos pesos, o dos por ciento diecinueve mil novecient
 ## PARTE B. Tomas de video (IA, en el navegador)
 
 ### Herramienta: Google Flow (cuenta Google AI Pro)
-Usa **Flow** (labs.google/fx/tools/flow) con mi cuenta de Google AI Pro, que ya está iniciada en el navegador. Es el generador de video con Veo.
+Usa **Flow** (labs.google/fx/tools/flow) con mi cuenta de Google AI Pro (Gemini Pro): **bernardo.vanegas7@gmail.com**. Verifica que el navegador esté dentro de esa cuenta (esquina superior derecha) antes de generar; si está en otra, cámbiala. Si te pide contraseña o verificación, detente y avísame: no la escribas tú. Es el generador de video con Veo. Las voces (Parte A) también se hacen con esta misma cuenta, en Gemini / AI Studio.
 - Crea un **proyecto nuevo por grupo** (Cabezal, Afilador) para que el set se mantenga.
 - Fija la **orientación vertical 9:16** y pide **3 resultados por prompt** si el selector lo permite.
 - **Consistencia:** primero genera la imagen fija del set (con el generador de imágenes de Flow o Gemini) y úsala en el modo **"Frames to Video"** (imagen inicial) o **"Ingredients to Video"** (imágenes de referencia del producto y del taladro). Las tomas del afilador deben partir del mismo fotograma de referencia que las ya hechas.
