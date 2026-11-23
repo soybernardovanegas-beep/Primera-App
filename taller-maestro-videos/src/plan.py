@@ -15,28 +15,28 @@ AFILADOR = dict(
 
 VIDEOS = {
  "C1": dict(file="C1-gotera", **CABEZAL, ofertas=["2 POR $139.900", "3 POR $179.900"], scenes=[
-    dict(voz="Llueve y la teja de zinc gotea.", txt="¿LLUEVE Y GOTEA?", clip=("rain", 0.0)),
+    dict(voz="Llueve y la teja de zinc gotea.", txt="¿LLUEVE Y GOTEA?", clip=("fffcccp", 14.0)),
     dict(voz="Con este cabezal, tu taladro corta la teja de reemplazo.", txt="TU TALADRO CORTA ZINC", clip=("ddgq", 2.5)),
     dict(voz="Recto o en curva, sin deformar la lámina.", txt="SIN DEFORMAR LA LÁMINA", clip=("dk1539", 6.5)),
     dict(voz="No incluye taladro. No corta acero inoxidable.", txt="NO INCLUYE TALADRO · NO CORTA INOXIDABLE", clip=("ddgq", 20.5)),
     dict(voz="Ochenta y nueve mil novecientos pesos. Envío gratis, pagas al recibir. Escríbenos.", card=True),
  ]),
  "C2": dict(file="C2-sin-chispas", **CABEZAL, ofertas=["2 POR $139.900", "3 POR $179.900"], scenes=[
-    dict(voz="¿Todavía cortas lámina con pulidora?", txt="¿LÁMINA CON PULIDORA?", clip=("grinder", 0.0)),
-    dict(voz="Con el cabezal no hay chispas ni disco que se rompa.", txt="CERO CHISPAS", clip=("fffcccp", 0.5)),
+    dict(voz="¿Todavía cortas lámina con pulidora?", txt="¿LÁMINA CON PULIDORA?", clip=("fffcccp", 0.5)),
+    dict(voz="Con el cabezal no hay chispas ni disco que se rompa.", txt="CERO CHISPAS", kind="seq", d1=2.3, clip=("dk1539", 6.5), clip2=("grinder", 1.0)),
     dict(voz="El corte queda limpio y la lámina no se quema.", txt="CORTE LIMPIO, SIN QUEMAR", clip=("fffcccp", 11.0)),
     dict(voz="Zinc, drywall, hojalata, aluminio.", txt="ZINC · DRYWALL · LÁMINA HASTA 1 MM", clip=("dk1632", 13.0)),
     dict(voz="Ochenta y nueve mil novecientos pesos. Envío gratis, pagas al recibir.", card=True),
  ]),
  "C3": dict(file="C3-antes-de-cizalla", **CABEZAL, ofertas=["2 POR $139.900", "3 POR $179.900"], scenes=[
-    dict(voz="Antes de comprar una cizalla eléctrica, mira esto.", txt="NO COMPRES CIZALLA", clip=("ddob", 4.5)),
+    dict(voz="Antes de comprar una cizalla eléctrica, mira esto.", txt="NO COMPRES CIZALLA", clip=("fffcccp", 17.0)),
     dict(voz="La tijera cansa y tuerce. Tu taladro corta derecho.", txt="TIJERA VS TALADRO", kind="seq", d1=1.7, clip=("tijera", 23.0), clip2=("fffcccp", 13.5)),
     dict(voz="Recto, en curva, en segundos.", txt="RECTO Y EN CURVA", clip=("dk1539", 9.0)),
     dict(voz="Se pone en el mandril y listo. No incluye taladro.", txt="SE PONE EN SEGUNDOS", clip=("fffcccp", 5.5)),
     dict(voz="Ochenta y nueve mil novecientos pesos. Pagas al recibir.", card=True),
  ]),
  "C4": dict(file="C4-regalo", **CABEZAL, ofertas=["2 POR $139.900"], scenes=[
-    dict(voz="Si tu papá tiene taladro…", txt="¿TU PAPÁ TIENE TALADRO?", clip=("ddgq", 20.0)),
+    dict(voz="Si tu papá tiene taladro…", txt="¿TU PAPÁ TIENE TALADRO?", clip=("dk1539", 1.0)),
     dict(voz="Este es el regalo que sí va a usar.", txt="ESTE ES SU REGALO", clip=("ddgq", 13.0)),
     dict(voz="Corta zinc, drywall y lámina, recto o en curva.", txt="CORTA ZINC Y DRYWALL", clip=("dk1632", 9.0)),
     dict(voz="Ochenta y nueve mil novecientos pesos, o dos por ciento treinta y nueve mil novecientos. Envío gratis y pagas al recibir.", card=True),
