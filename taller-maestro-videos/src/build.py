@@ -19,7 +19,7 @@ SRC = {
     "rain": "entrada/nuevo/tomas/Rain_dripping_through_cracked_roof.mp4", "grinder": "entrada/nuevo/tomas/Angle_grinder_cutting_metal_sheet.mp4",
     "dull": "entrada/nuevo/tomas/Hand_picking_dull_drill_bit.mp4", "skid": "entrada/nuevo/tomas/Drill_skidding_on_steel_plate.mp4",
     "macro": "entrada/nuevo/tomas/Twist_drill_bit_sharpening.mp4", "compare": "entrada/nuevo/tomas/Drilling_comparison_on_steel_plate.mp4",
-    "table": "entrada/nuevo/tomas/Cordless_drill_on_workshop_table.mp4",
+    "table": "entrada/nuevo/tomas/Cordless_drill_on_workshop_table.mp4", "tijera": "entrada/cabezal/satatools.mp4",
 }
 # recorte extra (fracciones superior, inferior) para quitar textos pequeños de la fuente
 EXTRA = {"fffcccp": (0.06, 0.08), "digify": (0.0, 0.24), "dk1632": (0.07, 0.0)}
@@ -91,7 +91,7 @@ def make_scene(vid, i, sc, d):
         run(["ffmpeg", "-v", "error", "-y", "-i", a, "-i", b, "-filter_complex", "hstack", "-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv420p", out])
     elif kind == "seq":
         a, b = out + ".a.mp4", out + ".b.mp4"
-        cut(sc["clip"][0], sc["clip"][1], d / 2, a); cut(sc["clip2"][0], sc["clip2"][1], d / 2, b)
+        d1 = sc.get("d1", d / 2); cut(sc["clip"][0], sc["clip"][1], d1, a); cut(sc["clip2"][0], sc["clip2"][1], d - d1, b)
         open(out + ".txt", "w").write("file '%s'\nfile '%s'\n" % (os.path.abspath(a), os.path.abspath(b)))
         run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", out + ".txt", "-c", "copy", out])
     else:

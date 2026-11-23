@@ -30,7 +30,7 @@ VIDEOS = {
  ]),
  "C3": dict(file="C3-antes-de-cizalla", **CABEZAL, ofertas=["2 POR $139.900", "3 POR $179.900"], scenes=[
     dict(voz="Antes de comprar una cizalla eléctrica, mira esto.", txt="NO COMPRES CIZALLA", clip=("ddob", 4.5)),
-    dict(voz="La tijera cansa y tuerce. Tu taladro corta derecho.", txt="TIJERA VS TALADRO", clip=("fffcccp", 13.5)),
+    dict(voz="La tijera cansa y tuerce. Tu taladro corta derecho.", txt="TIJERA VS TALADRO", kind="seq", d1=1.7, clip=("tijera", 23.0), clip2=("fffcccp", 13.5)),
     dict(voz="Recto, en curva, en segundos.", txt="RECTO Y EN CURVA", clip=("dk1539", 9.0)),
     dict(voz="Se pone en el mandril y listo. No incluye taladro.", txt="SE PONE EN SEGUNDOS", clip=("fffcccp", 5.5)),
     dict(voz="Ochenta y nueve mil novecientos pesos. Pagas al recibir.", card=True),
