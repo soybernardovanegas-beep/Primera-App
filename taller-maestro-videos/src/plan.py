@@ -66,4 +66,17 @@ VIDEOS = {
     dict(voz="Lleva dos: uno para él y uno para regalar.", txt="LLEVA 2: UNO PARA REGALAR", clip=("lab", 0.3)),
     dict(voz="Sesenta y nueve mil novecientos pesos, o dos por ciento diecinueve mil novecientos. Pagas al recibir.", card=True),
  ]),
+ "C5": dict(file="C5-precision-tijera", **CABEZAL, ofertas=["2 POR $139.900", "3 POR $179.900"], scenes=[
+    dict(voz="Todavía te estás cansando la mano y doblando los bordes con tijera de hojalatero?", txt="¿TIJERA DE HOJALATERO?", clip=("tijera", 23.0)),
+    dict(voz="Mira cómo este cabezal convierte tu taladro en una cortadora de precisión.", txt="CONVIERTE TU TALADRO", clip=("fffcccp", 14.0)),
+    dict(voz="Entra fácil en lámina acanalada, teja termoacústica o chapa lisa.", txt="ZINC · TEJA · CHAPA", clip=("dk1539", 6.5)),
+    dict(voz="Hace curvas cerradas sin esfuerzo y te ahorra horas en cada instalación.", txt="CURVAS SIN ESFUERZO", clip=("ddgq", 2.5)),
+    dict(voz="Vale 89.900 pesos y lo pagas en efectivo cuando lo recibas en tu casa o taller.", card=True),
+ ]),
+ "C6": dict(file="C6-chispas-oxido", **CABEZAL, ofertas=["2 POR $139.900", "3 POR $179.900"], scenes=[
+    dict(voz="Si sigues cortando lámina galvanizada o teja metálica con pulidora, las chispas queman la pintura y ese borde se te va a oxidar rápido.", txt="CHISPAS QUE CUESTAN CARO", kind="seq", d1=3.5, clip=("grinder", 1.0), clip2=("fffcccp", 11.0)),
+    dict(voz="Acopla este cabezal a cualquier taladro eléctrico o inalámbrico y haz cortes rectos, curvos o en círculo en segundos,", txt="CORTES RECTOS Y EN CURVA", clip=("fffcccp", 0.5)),
+    dict(voz="sin chispas, sin rebaba y sin doblar la lámina.", txt="CERO CHISPAS · CERO REBABA", clip=("dk1539", 6.5)),
+    dict(voz="Pídelo hoy por 89.900 pesos con envío gratis y pago contraentrega en toda Colombia.", card=True),
+ ]),
 }

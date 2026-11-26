@@ -28,7 +28,11 @@ def split(full, n, texts=None):
     b = [0] + cuts + [total]
     return list(zip(b, b[1:]))
 
-CUTS = {'C3': [3.0, 7.3, 10.2, 13.7], 'A2': [2.5, 5.2, 7.2]}  # cortes revisados a mano sobre las voces nuevas
+CUTS = {
+    'C3': [3.0, 7.3, 10.2, 13.7], 'A2': [2.5, 5.2, 7.2],  # cortes revisados a mano sobre las voces nuevas
+    'C5': [4.54, 8.90, 13.50, 17.93],   # audio externo: tijera → cabezal cortadora de precisión
+    'C6': [7.52, 14.36, 17.94],          # audio externo: chispas pulidora → cero chispas
+}
 
 def run(vid):
     sc = VIDEOS[vid]['scenes']
